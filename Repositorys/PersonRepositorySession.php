@@ -3,7 +3,7 @@
 session_start();
 require_once DIR . 'Repositorys/IRepository.php';
 
-class PersonRepository implements IRepository {
+class PersonRepositorySession implements IRepository {
 	private $persons;
 
 	public function __construct() {

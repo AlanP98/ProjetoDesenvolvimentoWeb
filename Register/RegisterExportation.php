@@ -13,14 +13,14 @@ function callExport() {
 	switch($_GET['object']) {
 		case 'Person':
 			require_once DIR . 'Classes/Person.php';
-			require_once DIR . 'Repositorys/PersonRepository.php';
-			$obj = new PersonRepository();
+			require_once DIR . 'Repositorys/PersonRepositorySession.php';
+			$obj = new PersonRepositorySession();
 			break;
 
 		case 'Product':
 			require_once DIR . 'Classes/Product.php';
-			require_once DIR . 'Repositorys/ProductRepository.php';
-			$obj = new ProductRepository();
+			require_once DIR . 'Repositorys/ProductRepositorySession.php';
+			$obj = new ProductRepositorySession();
 			break;
 	}
 

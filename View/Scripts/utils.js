@@ -11,9 +11,9 @@ function getFormData(form) {
 
 function toggleForm(element, toggleBtn) {
 	if (element.is(':visible')) {
-		toggleBtn.text('Abrir formulário');
+		toggleBtn.text('Exibir formulário');
 	} else {
-		toggleBtn.text('Fechar formulário');
+		toggleBtn.text('Ocultar formulário');
 	}
 
 	element.slideToggle();

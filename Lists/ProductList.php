@@ -2,13 +2,13 @@
 
 require_once '../config.php';
 require_once DIR . 'Classes/Product.php';
-require_once DIR . 'Repositorys/ProductRepository.php';
+require_once DIR . 'Repositorys/ProductRepositorySession.php';
 
 echo listing();
 
 function listing() {
 	try {
-		$productRepository = new ProductRepository();
+		$productRepository = new ProductRepositorySession();
 		$products = $productRepository->getAll();
 
 		$return = array();

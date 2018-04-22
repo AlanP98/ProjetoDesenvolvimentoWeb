@@ -1,5 +1,5 @@
-<div class="container">
-	<ul class="nav nav-tabs">
+<div class="container-fluid">
+	<ul class="nav nav-tabs bg-light">
 		<span class="navbar-brand" href="#">Desenvolvimento Web</span>
 		<li class="nav-item">
 			<a class="nav-link active" href="#" id="activeBar">Home</a>

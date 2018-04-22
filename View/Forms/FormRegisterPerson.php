@@ -1,4 +1,4 @@
-<button type="button" class="btn btn-outline-secondary mb-3" id="toggleForm">Abrir formulário</button>
+<button type="button" class="btn btn-outline-secondary mb-3" id="toggleForm">Exibir formulário</button>
 
 <form id="formRegisterPerson" style="display: none;" action="javascript:void(0);">
 	<div class="form-group">

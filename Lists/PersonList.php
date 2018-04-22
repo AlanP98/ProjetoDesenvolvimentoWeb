@@ -2,13 +2,13 @@
 
 require_once '../config.php';
 require_once DIR . 'Classes/Person.php';
-require_once DIR . 'Repositorys/PersonRepository.php';
+require_once DIR . 'Repositorys/PersonRepositorySession.php';
 
 echo listing();
 
 function listing() {
 	try {
-		$personRepository = new PersonRepository();
+		$personRepository = new PersonRepositorySession();
 		$persons = $personRepository->getAll();
 
 		$return = array();
