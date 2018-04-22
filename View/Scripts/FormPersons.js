@@ -3,11 +3,11 @@ $(function() {
 	list();
 
 	$('#toggleForm').click(function() {
-		toggleForm($('#registerPerson'), $('#toggleForm'));
+		toggleForm($('#formRegisterPerson'), $('#toggleForm'));
 	});
 
 	$('#register').click(function() {
-		add(getFormData($('#registerPerson')));
+		add(getFormData($('#formRegisterPerson')));
 	});
 
 });
@@ -39,10 +39,9 @@ function add(data) {
 				errorMsg = response.responseText;
 			} else if (response.error) {
 				errorMsg = response.msg;
-			} else {
-				list();
 			}
 
+			list();
 			if (errorMsg) {
 				createAlert({
 					'title': 'Aviso',
@@ -57,6 +56,17 @@ function add(data) {
 
 function renderTable(persons) {
 	$('#listPersonsContent').html('');
+
+	var content = getContentEmptySearch(persons);
+	if (content) {
+		$('#listPersons').hide();
+		$('#resultSearch').html(content);
+		return false;
+	} else {
+		$('#listPersons').show();
+		$('#resultSearch').html('');
+	}
+
 	$.each(persons, function(i, person) {
 		$('#listPersonsContent').append(
 			$('<tr>').append(
@@ -69,7 +79,7 @@ function renderTable(persons) {
 }
 
 function getGender(gender) {
-	switch(gender.toString().trim()) {
+	switch(gender) {
 		case 'M':
 			return 'Masculino';
 		case 'W':

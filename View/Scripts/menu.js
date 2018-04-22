@@ -33,7 +33,7 @@ function updateContext(objectType, action) {
 }
 
 function getTitle(objectType, action) {
-	return (action[0] ? action[0].toUpperCase() + action.substring(1) : '') + ' ' + objectType;
+	return (action[0] ? action[0].toUpperCase() + action.substring(1) + ' de ' : ' ') + objectType;
 }
 
 function setTitle(title) {

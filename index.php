@@ -8,7 +8,7 @@
 <body>
 	<?php
 		require_once "config.php";
-		require_once "View/menu.php";
+		require_once DIR . "View/menu.php";
 		// require_once DIR . "teste.php";
 	?>
 

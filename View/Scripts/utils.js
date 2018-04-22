@@ -59,6 +59,14 @@ function getEndpoint(objectType, action) {
 	return url;
 }
 
+function getContentEmptySearch(obj) {
+	if ($.isEmptyObject(obj)) {
+		return $('<div>', {'class': 'alert alert-info mt-4', 'role': 'alert', 'html': 'Nenhum registro encontrado.'});
+	} else {
+		return false;
+	}
+}
+
 class Ajax {
 	constructor(options) {
 		this.options = (options || {});

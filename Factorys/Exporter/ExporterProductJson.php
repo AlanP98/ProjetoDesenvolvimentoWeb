@@ -11,6 +11,6 @@ class ExporterProductJson extends ExporterProduct {
 			$products[] = $person->getAttributes();
 		}
 
-		return json_encode($products, true);
+		return json_encode($products, JSON_PRETTY_PRINT);
 	}
 }

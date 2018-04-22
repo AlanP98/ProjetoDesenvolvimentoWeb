@@ -1,6 +1,6 @@
 <button type="button" class="btn btn-outline-secondary mb-3" id="toggleForm">Abrir formulário</button>
 
-<form id="registerProduct" style="display: none;" action="javascript:void(0);">
+<form id="formRegisterProduct" style="display: none;" action="javascript:void(0);">
 	<div class="form-group">
 		<label for="recordNumber">Número de registro</label>
 		<input type="number" class="form-control" name="recordNumber" id="recordNumber" aria-describedby="recordNumberHelp" placeholder="123...">
@@ -18,6 +18,7 @@
 
 <h3>Produtos cadastrados</h3>
 
+<span id="resultSearch"></span>
 <table class="table table-hover table-light mt-3" id="listProducts">
 	<thead>
 		<tr>

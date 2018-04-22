@@ -3,11 +3,11 @@ $(function() {
 	list();
 
 	$('#toggleForm').click(function() {
-		toggleForm($('#registerProduct'), $('#toggleForm'));
+		toggleForm($('#formRegisterProduct'), $('#toggleForm'));
 	});
 
 	$('#register').click(function() {
-		add(getFormData($('#registerProduct')));
+		add(getFormData($('#formRegisterProduct')));
 	});
 
 });
@@ -39,10 +39,9 @@ function add(data) {
 				errorMsg = response.responseText;
 			} else if (response.error) {
 				errorMsg = response.msg;
-			} else {
-				list();
 			}
 
+			list();
 			if (errorMsg) {
 				createAlert({
 					'title': 'Aviso',
@@ -57,6 +56,17 @@ function add(data) {
 
 function renderTable(products) {
 	$('#listProductsContent').html('');
+
+	var content = getContentEmptySearch(products);
+	if (content) {
+		$('#listProducts').hide();
+		$('#resultSearch').html(content);
+		return false;
+	} else {
+		$('#listProducts').show();
+		$('#resultSearch').html('');
+	}
+
 	$.each(products, function(i, product) {
 		$('#listProductsContent').append(
 			$('<tr>').append(

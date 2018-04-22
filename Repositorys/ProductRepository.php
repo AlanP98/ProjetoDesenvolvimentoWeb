@@ -19,21 +19,19 @@ class ProductRepository implements IRepository {
 	}
 
 	public function add($product) {
-		echo 'ProductRepository add';
 		$this->products[] = $product;
 		$this->persistenceSave();
 	}
 
 	public function update($product) {
-		echo 'ProductRepository update';
+
 	}
 
 	public function delete($product) {
-		echo 'ProductRepository delete';
+
 	}
 
 	public function getById(int $id) {
-		echo 'ProductRepository getById';
 		foreach ($this->products as $product) {
 			if ($product->getRecordNumber() == $id) {
 				return $product;

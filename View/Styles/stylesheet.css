@@ -10,3 +10,8 @@
 	font-weight: bold;
 	cursor: default;
 }
+
+.editable {
+	overflow: auto;
+	height: 400px;
+}

@@ -1,6 +1,6 @@
 <button type="button" class="btn btn-outline-secondary mb-3" id="toggleForm">Abrir formulário</button>
 
-<form id="registerPerson" style="display: none;" action="javascript:void(0);">
+<form id="formRegisterPerson" style="display: none;" action="javascript:void(0);">
 	<div class="form-group">
 		<label for="recordNumber">Número de registro</label>
 		<input type="number" class="form-control" name="recordNumber" id="recordNumber" aria-describedby="recordNumberHelp">
@@ -32,7 +32,7 @@
 <hr class="mt-5">
 
 <h3>Clientes cadastrados</h3>
-
+<span id="resultSearch"></span>
 <table class="table table-hover table-light mt-3" id="listPersons">
 	<thead>
 		<tr>

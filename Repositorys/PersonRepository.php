@@ -7,7 +7,6 @@ class PersonRepository implements IRepository {
 	private $persons;
 
 	public function __construct() {
-		// var_dump($_SESSION);
 		$this->loadData();
 	}
 
@@ -20,21 +19,19 @@ class PersonRepository implements IRepository {
 	}
 
 	public function add($person) {
-		echo 'PersonRepository add';
 		$this->persons[] = $person;
 		$this->persistenceSave();
 	}
 
 	public function update($person) {
-		echo 'PersonRepository update';
+
 	}
 
 	public function delete($person) {
-		echo 'PersonRepository delete';
+
 	}
 
 	public function getById(int $id) {
-		echo 'PersonRepository getById';
 		foreach ($this->persons as $person) {
 			if ($person->getRecordNumber() == $id) {
 				return $person;
@@ -45,7 +42,6 @@ class PersonRepository implements IRepository {
 	}
 
 	public function getAll() {
-		//echo 'PersonRepository getAll';
 		return $this->persons;
 	}
 

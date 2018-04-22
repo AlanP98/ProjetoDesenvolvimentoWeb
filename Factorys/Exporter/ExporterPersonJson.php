@@ -11,6 +11,6 @@ class ExporterPersonJson extends ExporterPerson {
 			$persons[] = $person->getAttributes();
 		}
 
-		return json_encode($persons, true);
+		return json_encode($persons, JSON_PRETTY_PRINT);
 	}
 }
