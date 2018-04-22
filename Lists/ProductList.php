@@ -2,21 +2,21 @@
 
 require_once '../config.php';
 require_once DIR . 'Classes/Product.php';
-require_once DIR . 'Repositorys/ProductRepositorySession.php';
+require_once DIR . 'Repositorys/ProductRepository.php';
 
 echo listing();
 
 function listing() {
 	try {
-		$productRepository = new ProductRepositorySession();
+		$productRepository = new ProductRepository();
 		$products = $productRepository->getAll();
 
-		$return = array();
-		foreach($products as $product) {
-			$return[] = $product->getAttributes();
-		}
+		// $return = array();
+		// foreach($products as $product) {
+		// 	$return[] = $product->getAttributes();
+		// }
 
-		return json_encode($return);
+		return json_encode($products);
 	} catch(Exception $e) {
 		return json_encode(array(
 			'error' => true,

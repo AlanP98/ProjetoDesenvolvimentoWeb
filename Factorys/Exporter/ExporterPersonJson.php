@@ -7,7 +7,8 @@ class ExporterPersonJson extends ExporterPerson {
 	public function serializeObj(&$data) : string {
 		$persons = array();
 
-		foreach($data as $person) {
+		foreach($data as $p) {
+			$person = new Person($p['recordNumber'], $p['name'], $p['gender']);
 			$persons[] = $person->getAttributes();
 		}
 

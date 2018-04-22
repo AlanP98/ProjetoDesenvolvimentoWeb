@@ -6,7 +6,8 @@ class ExporterProductCsv extends ExporterProduct {
 
 	public function serializeObj(&$data) : string {
 		$lines = array();
-		foreach ($data as $i => $product) {
+		foreach ($data as $i => $p) {
+			$product = new Product($p['recordNumber'], $p['description']);
 			$attrs = $product->getAttributes();
 			$lines[0] = implode(';', array_keys($attrs)) . ';' . PHP_EOL;
 			$lines[$i + 1] = '';

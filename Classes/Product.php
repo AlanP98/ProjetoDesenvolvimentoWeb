@@ -28,4 +28,8 @@ class Product {
 	public function setDescription($description) {
 		$this->description = $description;
 	}
+
+	public function getClassName() {
+		return get_class($this);
+	}
 }

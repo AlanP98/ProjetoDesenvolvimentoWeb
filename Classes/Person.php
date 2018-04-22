@@ -38,4 +38,8 @@ class Person {
 	public function setGender($gender) {
 		$this->gender = $gender;
 	}
+
+	public function getClassName() {
+		return get_class($this);
+	}
 }
