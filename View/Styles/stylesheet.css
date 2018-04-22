@@ -1,0 +1,12 @@
+.nav-tabs {
+	cursor: pointer;
+}
+
+.navbar-brand:hover {
+	color: #007bff;
+}
+
+#activeBar {
+	font-weight: bold;
+	cursor: default;
+}
