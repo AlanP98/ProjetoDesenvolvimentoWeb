@@ -3,10 +3,15 @@
 require_once '../config.php';
 require_once DIR . 'Factorys/Exporter/ExporterFactoryProvider.php';
 
-if (isset($_GET['exporterType']) && isset($_GET['object'])) {
-	echo nl2br(callExport());
-} else {
-	throw new Exception('Exportador e/ou objeto não definido.');
+try {
+	if (isset($_GET['exporterType']) && isset($_GET['object'])) {
+		echo nl2br(callExport());
+	} else {
+		throw new Exception('Tipo de exportador ou objeto não definido.');
+	}
+} catch(Exception $e) {
+	http_response_code(400);
+	echo $e->getMessage();
 }
 
 function callExport() {

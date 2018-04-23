@@ -18,8 +18,16 @@ class ProductRepository implements IRepository {
 
 	}
 
-	public function delete($product) {
+	public function delete($product) { }
 
+	public function batchDelete($ids) {
+		if (!is_array($ids)) {
+			return false;
+		}
+
+		$query = 'DELETE FROM product WHERE id IN (' . implode(',', $ids) . ')';
+		$stmt = $this->conn->prepare($query);
+		return $stmt->execute();
 	}
 
 	public function getById(int $id) {

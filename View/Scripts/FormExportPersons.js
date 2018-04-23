@@ -10,7 +10,7 @@ $(function() {
 			}
 		});
 
-		ajax.GET('Register/RegisterExportation.php', data);
+		ajax.GET('Service/RegisterExportation.php', data);
 	});
 
 });

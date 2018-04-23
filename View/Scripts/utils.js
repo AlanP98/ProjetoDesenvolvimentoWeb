@@ -1,3 +1,7 @@
+function debug(o) {
+	console.log(o);
+}
+
 function getFormData(form) {
 	var formArray = form.serializeArray();
 	var formData = {};
@@ -35,36 +39,25 @@ function createAlert(options) {
 	}, (options.timeOut || 5000));
 }
 
-function getEndpoint(objectType, action) {
-	var url = '';
-
-	switch(action) {
-		case 'cadastro':
-			url += 'Register/Register';
-			break;
-		case 'exportação':
-			url += 'Export/Export';
-			break;
-	}
-
-	switch(objectType) {
-		case 'produtos':
-			url += 'Product.php';
-			break;
-		case 'clientes':
-			url += 'Person.php';
-			break;
-	}
-
-	return url;
-}
-
 function getContentEmptySearch(obj) {
 	if ($.isEmptyObject(obj)) {
 		return $('<div>', {'class': 'alert alert-info mt-4', 'role': 'alert', 'html': 'Nenhum registro encontrado.'});
 	} else {
 		return false;
 	}
+}
+
+function displayErrors(response) {
+	if ((response.status && response.status !== 200) || response.error) {
+		createAlert({
+			'title': 'Aviso',
+			'msg': (response.responseText || response.msg)
+		});
+
+		return true;
+	}
+
+	return false;
 }
 
 class Ajax {

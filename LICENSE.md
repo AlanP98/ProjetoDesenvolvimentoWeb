@@ -1,2 +1,2 @@
 
-Copyright (C) 2018 
+Copyright Alan Possamai(C) 2018

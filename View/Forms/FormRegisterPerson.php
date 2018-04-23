@@ -39,6 +39,7 @@
 			<th scope="col">Número de registro</th>
 			<th scope="col">Nome</th>
 			<th scope="col">Gênero</th>
+			<th scope="col"></th>
 		</tr>
 	</thead>
 	<tbody id="listPersonsContent"></tbody>

@@ -1,5 +1,4 @@
 $(function() {
-
 	list();
 
 	$('#toggleForm').click(function() {
@@ -16,42 +15,53 @@ function list() {
 	var ajax = new Ajax({
 		dataType: 'json',
 		alwaysFn: function(response) {
-			if (response.error) {
-				createAlert({
-					'title': 'Aviso',
-					'msg': response.msg
-				});
+			if (!displayErrors(response)) {
+				renderTable(response);
 			}
-
-			renderTable(response);
 		}
 	});
 
-	ajax.GET('Lists/ProductList.php');
+	ajax.GET('Service/ListProducts.php');
 }
 
 function add(data) {
 	var ajax = new Ajax({
 		dataType: 'json',
 		alwaysFn: function(response) {
-			var errorMsg = '';
-			if (response.status && response.status != 200) {
-				errorMsg = response.responseText;
-			} else if (response.error) {
-				errorMsg = response.msg;
-			}
-
+			displayErrors(response);
 			list();
-			if (errorMsg) {
-				createAlert({
-					'title': 'Aviso',
-					'msg': errorMsg
-				});
-			}
 		}
 	});
 
-	ajax.POST('Register/RegisterProduct.php', data);
+	ajax.POST('Service/RegisterProduct.php', data);
+}
+
+function deleteProducts(ids) {
+	if (!confirm('Deseja deletar o produto?')) {
+		return false;
+	}
+
+	if (!Array.isArray(ids)) {
+		ids = [ids];
+	}
+
+	var data = { 'ids': ids };
+	var ajax = new Ajax({
+		'dataType': 'json',
+		alwaysFn: function (response) {
+			if (!displayErrors(response)) {
+				createAlert({
+					'alertType': 'success',
+					'title': 'Sucesso',
+					'msg': 'Produto excluído!'
+				});
+			}
+
+			list();
+		}
+	});
+
+	ajax.DELETE('Service/DeleteProduct.php', data);
 }
 
 function renderTable(products) {
@@ -71,7 +81,10 @@ function renderTable(products) {
 		$('#listProductsContent').append(
 			$('<tr>').append(
 				$('<td>', {'html': product.recordNumber}),
-				$('<td>', {'html': product.description})
+				$('<td>', {'html': product.description}),
+				$('<td>').append(
+					$('<i>', { 'class': 'fas fa-trash-alt', 'color': '#ff4949ba', 'cursor': 'pointer', 'onClick': 'deleteProducts(' + product.id + ')' })
+				)
 			)
 		);
 	});

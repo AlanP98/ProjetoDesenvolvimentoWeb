@@ -18,8 +18,16 @@ class PersonRepository implements IRepository {
 
 	}
 
-	public function delete($person) {
+	public function delete($person) { }
 
+	public function batchDelete($ids) {
+		if (!is_array($ids)) {
+			return false;
+		}
+
+		$query = 'DELETE FROM person WHERE id IN (' . implode(',', $ids) . ')';
+		$stmt = $this->conn->prepare($query);
+		return $stmt->execute();
 	}
 
 	public function getById(int $id) {
