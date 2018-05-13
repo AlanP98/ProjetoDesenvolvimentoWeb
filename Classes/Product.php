@@ -1,8 +1,8 @@
 <?php
 
 class Product {
-	public $recordNumber;
-	public $description;
+	protected $recordNumber;
+	protected $description;
 
 	public function __construct($recordNumber, $description) {
 		$this->recordNumber = $recordNumber;

@@ -4,17 +4,35 @@ require_once '../config.php';
 require_once DIR . 'Classes/Person.php';
 require_once DIR . 'Repositorys/PersonRepository.php';
 
+requireLogin();
+
 try {
-	if (isset($_POST['recordNumber']) && isset($_POST['name']) && isset($_POST['gender'])) {
-		if (!empty($_POST['recordNumber']) && !empty($_POST['name']) && !empty($_POST['gender'])) {
-			$personRepository = new PersonRepository();
-			$person = new Person($_POST['recordNumber'], $_POST['name'], $_POST['gender']);
-			echo json_encode($personRepository->add($person));
-		}
-	} else {
-		throw new Exception('Preencha todos os campos.');
-	}
+	echo json_encode(registerPerson());
 } catch(Exception $e) {
 	http_response_code(400);
 	echo $e->getMessage();
+}
+
+function registerPerson() {
+	$personId = (isset($_POST['personId']) ? $_POST['personId'] : 0);
+	$recordNumber = (isset($_POST['recordNumber']) ? $_POST['recordNumber'] : '');
+	$name = (isset($_POST['name']) ? $_POST['name'] : '');
+	$gender = (isset($_POST['gender']) ? $_POST['gender'] : '');
+	$email = (isset($_POST['email']) ? $_POST['email'] : '');
+
+	if (!empty($recordNumber) && !empty($name) && !empty($gender)) {
+		$person = new Person($recordNumber, $name, $gender, $email);
+		$personRepository = new PersonRepository();
+
+		$result = false;
+		if (empty($personId)) {
+			$result = $personRepository->add($person);
+		} else {
+			$result = $personRepository->update($person);
+		}
+
+		return json_encode($result);
+	}
+
+	return new ErrorObj(400, 'Preencha todos os campos.');
 }

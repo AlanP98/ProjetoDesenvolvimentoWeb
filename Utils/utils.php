@@ -22,5 +22,21 @@ function insertQuery($object, $conn) {
 	}
 
 	$st = $stmt->execute();
-	return $st;
+	if ($st === true) {
+		return $conn->lastInsertId();
+	} else {
+		return null;
+	}
+}
+
+class ErrorObj {
+	public $errorCode;
+	public $errorMessage;
+	public $element;
+
+	public function __construct($errorCode, $errorMessage, $element = null) {
+		$this->errorCode = $errorCode;
+		$this->errorMessage = $errorMessage;
+		$this->element = $element;
+	}
 }

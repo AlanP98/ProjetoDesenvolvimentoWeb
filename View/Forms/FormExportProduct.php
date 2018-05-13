@@ -1,3 +1,8 @@
+<?php
+	require_once '../../config.php';
+	requireLogin();
+?>
+
 <form id="formExportProduct" action="javascript:void(0);">
 	<div class="form-group">
 		<p>Escolha o formato para exportação</p>

@@ -1,35 +1,60 @@
-$(function() {
+$(function () {
 	list();
 
-	$('#toggleForm').click(function() {
-		toggleForm($('#formRegisterPerson'), $('#toggleForm'));
+	$('#toggleFilters').click(function () {
+		toggleForm($('#filters'), $('#toggleFilters'), 'filtros');
 	});
 
-	$('#register').click(function() {
-		add(getFormData($('#formRegisterPerson')));
+	$('#registerPerson').click(function () {
+		openRegisterForm();
+	});
+
+	$('#search').click(function () {
+		list();
+	});
+
+	$('#clearFilters').click(function () {
+		$('#filters input').val('');
+		$('#filters select').val('');
+
+		list();
 	});
 
 });
 
 function list() {
+	var data = {
+		'name': $('#filterName').val(),
+		'recordNumber': $('#filterRecordNumber').val(),
+		'gender': $('#filterGender option:selected').val()
+	};
+
 	var ajax = new Ajax({
 		dataType: 'json',
-		alwaysFn: function(response) {
+		alwaysFn: function (response) {
 			if (!displayErrors(response)) {
 				renderTable(response);
 			}
 		}
 	});
 
-	ajax.GET('Service/ListPersons.php');
+	ajax.GET('Service/GetPersons.php', data);
 }
 
-function add(data) {
+function save(data) {
 	var ajax = new Ajax({
 		dataType: 'json',
-		alwaysFn: function(response) {
-			displayErrors(response);
+		alwaysFn: function (response) {
 			list();
+
+			if (!displayErrors(response)) {
+				destroyModal('modalRegisterPersons');
+				createAlert({
+					'alertType': 'success',
+					'title': 'Sucesso',
+					'msg': 'Pessoa ' + (data.personId > 0 ? 'atualizado' : 'adicionado')
+				});
+			}
 		}
 	});
 
@@ -37,7 +62,7 @@ function add(data) {
 }
 
 function deletePersons(ids) {
-	if (!confirm('Deseja deletar o cliente?')) {
+	if (!confirm('Deseja excluir a pessoa?')) {
 		return false;
 	}
 
@@ -45,7 +70,7 @@ function deletePersons(ids) {
 		ids = [ids];
 	}
 
-	var data = {'ids': ids};
+	var data = { 'ids': ids };
 	var ajax = new Ajax({
 		'dataType': 'json',
 		alwaysFn: function (response) {
@@ -53,7 +78,7 @@ function deletePersons(ids) {
 				createAlert({
 					'alertType': 'success',
 					'title': 'Sucesso',
-					'msg': 'Cliente excluído!'
+					'msg': 'Pessoa(s) excluída(s)!'
 				});
 			}
 
@@ -62,6 +87,33 @@ function deletePersons(ids) {
 	});
 
 	ajax.DELETE('Service/DeletePerson.php', data);
+}
+
+function openRegisterForm(personId) {
+	var ajax = new Ajax({
+		alwaysFn: function (response) {
+			createModal({
+				'modalId': 'modalRegisterPersons',
+				'title': (personId ? 'Atualizar' : 'Cadastrar') + ' pessoa',
+				'body': response,
+				'largeModal': true,
+				'textBtnOk': (personId ? 'Atualizar' : 'Salvar'),
+				'classBtnOk': (personId ? 'btn-primary' : 'btn-success'),
+				'fnOk': function () {
+					save(getFormData($('#formRegisterPerson')));
+				},
+				'fnAfterOpen': function () {
+					if (personId) {
+						$('#update').show();
+					} else {
+						$('#register').show();
+					}
+				}
+			});
+		}
+	});
+
+	ajax.GET('View/Forms/FormRegisterPerson.php');
 }
 
 function renderTable(persons) {
@@ -77,22 +129,54 @@ function renderTable(persons) {
 		$('#resultSearch').html('');
 	}
 
-	$.each(persons, function(i, person) {
+	$.each(persons, function (i, person) {
 		$('#listPersonsContent').append(
 			$('<tr>').append(
-				$('<td>', {'html': person.recordNumber}),
-				$('<td>', {'html': person.name}),
-				$('<td>', {'html': getGender(person.gender)}),
+				$('<td>', { 'html': person.recordNumber }),
+				$('<td>', { 'html': person.name }),
+				$('<td>', { 'html': person.email }),
+				$('<td>', { 'html': getGender(person.gender) }),
 				$('<td>').append(
-					$('<i>', { 'class': 'fas fa-trash-alt', 'color': '#ff4949ba', 'cursor': 'pointer', 'onClick': 'deletePersons(' + person.id + ')'})
+					$('<i>', { 'class': 'far fa-edit', 'color': 'green', 'cursor': 'pointer', 'data-toggle': 'tooltip', 'data-placement': 'top', 'title': 'Editar pessoa', 'onClick': 'updateForm(' + person.id + ')' }),
+					$('<i>', { 'class': 'ml-3 far fa-trash-alt', 'color': '#ff4949ba', 'cursor': 'pointer', 'data-toggle': 'tooltip', 'data-placement': 'top', 'title': 'Excluir pessoa', 'onClick': 'deletePersons(' + person.id + ')' })
 				)
 			)
 		);
 	});
+
+	initTooltips();
+}
+
+function updateForm(personId) {
+	var data = { 'id': personId };
+	var ajax = new Ajax({
+		'dataType': 'json',
+		'beforeSendFn': function () {
+			openRegisterForm(personId);
+		},
+		alwaysFn: function (response) {
+			if (!displayErrors(response)) {
+				populateForm(response);
+			}
+		}
+	});
+
+	ajax.GET('Service/GetPersons.php', data);
+}
+
+function populateForm(person) {
+	setTimeout(function () {
+		$('#recordNumber').attr('readonly', true);
+		$('#personId').val(person.id);
+		$('#recordNumber').val(person.recordNumber);
+		$('#name').val(person.name);
+		$('#email').val(person.email);
+		$('input[name=gender][value=' + person.gender + ']').prop('checked', true);
+	}, 500);
 }
 
 function getGender(gender) {
-	switch(gender) {
+	switch (gender) {
 		case 'M':
 			return 'Masculino';
 		case 'W':

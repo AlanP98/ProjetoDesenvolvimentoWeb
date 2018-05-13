@@ -2,7 +2,7 @@
 <html lang="pt-br">
 <head>
 	<meta charset="utf-8"/>
-	<title>Desenvolvimento Web</title>
+	<title>Login - Desenvolvimento Web</title>
 
 	<!-- Bootstrap core CSS -->
 	<link href="View/Includes/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -15,8 +15,6 @@
 	<!-- Font Awesome Free 5.0.10 -->
 	<script defer src="View/Includes/fontawesome/fontawesome-all.js"></script>
 
-	<!-- <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.10/css/all.css" integrity="sha384-+d0P83n9kaQMCwj8F4RJB66tzIwOKmrdb46+porD/OvrJ+37WqIM7UoBtwHO6Nlg" crossorigin="anonymous"> -->
-
 	<!-- Own project scripts -->
 	<script type="text/javascript" src="View/Scripts/utils.js"></script>
 
@@ -25,11 +23,14 @@
 
 </head>
 <body>
-	<div class="container-fluid">
-		<?php
-			require_once 'config.php';
-			require_once DIR . 'View/home.php';
-		?>
-	</div>
+	<?php
+		require_once "config.php";
+
+		if (isLogged()) {
+			header('Location: dashboard.php');
+		} else {
+			require_once DIR . "View/Forms/FormLogin.php";
+		}
+	?>
 </body>
 </html>

@@ -3,6 +3,8 @@
 require_once '../config.php';
 require_once DIR . 'Repositorys/PersonRepository.php';
 
+requireLogin();
+
 try {
 	$method = $_SERVER['REQUEST_METHOD'];
 	if ($method === 'DELETE') {
@@ -12,10 +14,10 @@ try {
 			$personRepository = new PersonRepository();
 			echo json_encode($personRepository->batchDelete($_DELETE['ids']));
 		} else {
-			throw new Exception('Nenhum cliente foi selecionado.');
+			return new ErrorObj(400, 'Nenhuma pessoa foi selecionada.');
 		}
 	} else {
-		throw new Exception('DELETE requested from a wrong method: "' . $method . '"');
+		return new ErrorObj(400, 'DELETE requested from a wrong method: "' . $method . '"');
 	}
 } catch(Exception $e) {
 	http_response_code(400);

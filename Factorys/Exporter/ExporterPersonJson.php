@@ -8,10 +8,28 @@ class ExporterPersonJson extends ExporterPerson {
 		$persons = array();
 
 		foreach($data as $p) {
-			$person = new Person($p['recordNumber'], $p['name'], $p['gender']);
-			$persons[] = $person->getAttributes();
+			$person = new Person($p['recordNumber'], $p['name'], $p['gender'], $p['email']);
+			$personArray = $person->getAttributes();
+			$personArray['gender'] = $this->parseGender($person->getGender());
+			$persons[] = $personArray;
 		}
 
 		return json_encode($persons, JSON_PRETTY_PRINT);
+	}
+
+	private function parseGender($gender) {
+		switch ($gender) {
+			case 'M':
+				return 'Masculino';
+
+			case 'W':
+				return 'Feminino';
+
+			case 'O':
+				return 'Outro';
+
+			default:
+				return 'Não informado';
+		}
 	}
 }

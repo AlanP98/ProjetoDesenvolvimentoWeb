@@ -3,6 +3,8 @@
 require_once '../config.php';
 require_once DIR . 'Repositorys/ProductRepository.php';
 
+requireLogin();
+
 try {
 	$method = $_SERVER['REQUEST_METHOD'];
 	if ($method === 'DELETE') {
@@ -12,10 +14,10 @@ try {
 			$productRepository = new ProductRepository();
 			echo json_encode($productRepository->batchDelete($_DELETE['ids']));
 		} else {
-			throw new Exception('Nenhum produto foi selecionado.');
+			return new ErrorObj(400, 'Nenhum produto foi selecionado.');
 		}
 	} else {
-		throw new Exception('DELETE requerido através do método incorreto: "' . $method . '"');
+		return new ErrorObj(400, 'DELETE requerido através do método incorreto: "' . $method . '"');
 	}
 } catch(Exception $e) {
 	http_response_code(400);

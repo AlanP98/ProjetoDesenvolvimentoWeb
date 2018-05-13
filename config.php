@@ -1,25 +1,34 @@
 <?php
 
 define('DIR', dirname(__FILE__) . '/');
+define('DSN', 'mysql:dbname=projeto_desenvolvimento_web;host=127.0.0.1');
+define('USER', 'root');
+define('PASSWORD', '');
 
-require_once DIR . 'Utils/MySqlConnection.php';
 require_once DIR . 'Utils/utils.php';
+require_once DIR . 'Classes/MySqlConnection.php';
+require_once DIR . 'Classes/Authenticator.php';
+require_once DIR . 'Classes/Session.php';
+include_once DIR . 'Utils/FirePHPCore/fb.php';
 
-$connection = null;
+ob_start();
+Session::getInstance();
 
 try {
-	if (is_null($connection)) {
-		$connection = new MySqlConnection('mysql:dbname=projeto_desenvolvimento_web;host=127.0.0.1', 'root', '');
-	}
+	MySqlConnection::getConnection(DSN, USER, PASSWORD);
 } catch(Exception $e) {
 	exit('Não foi possível conectar-se à base de dados.');
 }
 
-//$con->close();
-// var_dump($connection);
+function isLogged() {
+	return Authenticator::isLogged();
+}
 
-function autoload($classPath) {
-	require_once(DIR . $classPath . '.php');
- }
+function requireLogin() {
+	// $auth = Session::getInstance()->getByKey('AUTHENTICATION');
+	//TODO: validar tempo de sessão - permitir até 30 min sem atividade
 
- spl_autoload_register('autoload');
+	if (!isLogged()) {
+		Authenticator::logout();
+	}
+}

@@ -1,33 +1,26 @@
-<button type="button" class="btn btn-outline-secondary mb-3" id="toggleForm">Exibir formulário</button>
+<?php
+	require_once '../../config.php';
+	requireLogin();
+?>
 
-<form id="formRegisterProduct" style="display: none;" action="javascript:void(0);">
-	<div class="form-group">
-		<label for="recordNumber">Número de registro</label>
-		<input type="number" class="form-control" name="recordNumber" id="recordNumber" aria-describedby="recordNumberHelp" placeholder="123...">
-		<small id="recordNumberHelp" class="form-text text-muted">Somente números</small>
+<form id="formRegisterProduct" action="javascript:void(0);">
+	<div class="row">
+		<div class="col-10">
+			<div class="form-group">
+				<label for="recordNumber">Número de registro</label>
+				<input type="number" class="form-control" name="recordNumber" id="recordNumber" aria-describedby="recordNumberHelp" maxlength="6">
+				<small id="recordNumberHelp" class="form-text text-muted">Somente números</small>
+			</div>
+		</div>
+		<div class="col-2">
+			<button type="button" class="btn btn-outline-primary text-right ml-3" id="generateRecordNumber" data-toggle="tooltip" data-placement="top" title="Gerar nro registro" onclick="setRandomRecordNumber()" style="margin-top: 35px;">
+				<i class="fas fa-calculator"></i>
+			</button>
+		</div>
 	</div>
+
 	<div class="form-group">
 		<label for="description">Descrição</label>
 		<input type="text" class="form-control" name="description" id="description" placeholder="Descrição">
 	</div>
-
-	<button type="button" class="btn btn-primary" id="register">Cadastrar</button>
 </form>
-
-<hr class="mt-5">
-
-<h3>Produtos cadastrados</h3>
-
-<span id="resultSearch"></span>
-<table class="table table-hover table-light mt-3" id="listProducts">
-	<thead>
-		<tr>
-			<th scope="col">Número de registro</th>
-			<th scope="col">Descrição</th>
-			<th scope="col"></th>
-		</tr>
-	</thead>
-	<tbody id="listProductsContent"></tbody>
-</table>
-
-<script type="text/javascript" src="View/Scripts/FormProducts.js"></script>

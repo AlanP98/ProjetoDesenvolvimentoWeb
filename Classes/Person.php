@@ -1,18 +1,18 @@
 <?php
 
 class Person {
-	protected $recordNumber;
-	protected $name;
-	protected $gender;
+	private $recordNumber;
+	private $name;
+	private $gender;
+	private $email;
+	private $idUser;
 
-	public function __construct($recordNumber, $name, $gender) {
+	public function __construct($recordNumber, $name, $gender, $email, $idUser = null) {
 		$this->recordNumber = $recordNumber;
 		$this->name = $name;
 		$this->gender = $gender;
-	}
-
-	public function getAttributes() {
-		return get_object_vars($this);
+		$this->email = $email;
+		$this->idUser = $idUser;
 	}
 
 	public function getRecordNumber() {
@@ -27,6 +27,14 @@ class Person {
 		return $this->gender;
 	}
 
+	public function getEmail() {
+		return $this->email;
+	}
+
+	public function getIdUser() {
+		return $this->idUser;
+	}
+
 	public function setRecordNumber($recordNumber) {
 		$this->recordNumber = $recordNumber;
 	}
@@ -37,6 +45,14 @@ class Person {
 
 	public function setGender($gender) {
 		$this->gender = $gender;
+	}
+
+	public function setEmail($email) {
+		$this->email = $email;
+	}
+
+	public function getAttributes() {
+		return get_object_vars($this);
 	}
 
 	public function getClassName() {

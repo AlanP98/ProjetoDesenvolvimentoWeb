@@ -3,6 +3,8 @@
 require_once '../config.php';
 require_once DIR . 'Factorys/Exporter/ExporterFactoryProvider.php';
 
+requireLogin();
+
 try {
 	if (isset($_GET['exporterType']) && isset($_GET['object'])) {
 		echo nl2br(callExport());
