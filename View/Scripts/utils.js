@@ -1,14 +1,14 @@
 class Ajax {
 	constructor(options) {
-		this.options = (options || {});
+		this.options = (typeof options === "undefined" ? {} : options);
 
-		this.async = (options.async || false);
-		this.beforeSend = options.beforeSendFn;
-		this.contentType = (options.contentType || 'application/x-www-form-urlencoded; charset=UTF-8');
-		this.dataType = (options.dataType || 'html');
-		this.fail = options.failFn;
-		this.done = options.doneFn;
-		this.always = options.alwaysFn;
+		this.async = (this.options.async || false);
+		this.beforeSend = this.options.beforeSendFn;
+		this.contentType = (this.options.contentType || 'application/x-www-form-urlencoded; charset=UTF-8');
+		this.dataType = (this.options.dataType || 'html');
+		this.fail = this.options.failFn;
+		this.done = this.options.doneFn;
+		this.always = this.options.alwaysFn;
 	}
 
 	GET(url, data) {
@@ -234,5 +234,8 @@ function scrollTop() {
 function initTooltips() {
 	setTimeout(function () {
 		$('[data-toggle="tooltip"]').tooltip();
+		$('body').mouseup(function() {
+			$('[data-toggle="tooltip"], .tooltip').tooltip("hide");
+		});
 	}, 500);
 };

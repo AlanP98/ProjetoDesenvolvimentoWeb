@@ -22,12 +22,6 @@ $(function () {
 });
 
 function list() {
-	var data = {
-		'userName': $('#filterUserName').val(),
-		'name': $('#filterName').val(),
-		'accessLevel': $('#filterAccessLevel').val()
-	};
-
 	var ajax = new Ajax({
 		dataType: 'json',
 		alwaysFn: function (response) {
@@ -37,7 +31,11 @@ function list() {
 		}
 	});
 
-	ajax.GET('Service/ListUsers.php', data);
+	ajax.GET('Service/ListUsers.php', {
+		'userName': $('#filterUserName').val(),
+		'name': $('#filterName').val(),
+		'accessLevel': $('#filterAccessLevel').val()
+	});
 }
 
 
@@ -52,50 +50,13 @@ function save(data) {
 				createAlert({
 					'alertType': 'success',
 					'title': 'Sucesso',
-					'msg': 'Usuário ' + (data.personId > 0 ? 'atualizado' : 'adicionado')
+					'msg': 'Usuário ' + (data.personId > 0 ? 'atualizado!' : 'adicionado!')
 				});
 			}
 		}
 	});
 
 	ajax.POST('Service/RegisterUser.php', data);
-}
-
-function deleteUsers(ids) {
-	debug(ids);
-	if (!confirm('Cuidado! Você realmente deseja excluir este usuário?')) {
-		return false;
-	}
-
-	if (!Array.isArray(ids)) {
-		ids = [ids];
-	}
-
-	var data = { 'ids': ids };
-	var ajax = new Ajax({
-		'dataType': 'json',
-		alwaysFn: function (response) {
-			if (response == true) {
-				createAlert({
-					'alertType': 'success',
-					'title': 'Sucesso',
-					'msg': 'Usuário excluído!'
-				});
-			} else {
-				var msg = (response.errorMessage || response.responseText);
-				createModal({
-					'title': 'Não foi possível excluir',
-					'hideBtnCanel': true,
-					'textBtnOk': 'Fechar',
-					'body': msg
-				});
-			}
-
-			list();
-		}
-	});
-
-	ajax.DELETE('Service/DeleteUser.php', data);
 }
 
 function renderTable(users) {
@@ -112,7 +73,6 @@ function renderTable(users) {
 	}
 
 	$.each(users, function (i, user) {
-		debug(user);
 		$('#listUsersContent').append(
 			$('<tr>').append(
 				$('<td>', { 'html': user.userName }),
@@ -120,7 +80,7 @@ function renderTable(users) {
 				$('<td>', { 'html': parseAccessLevel(user.accessLevel) }),
 				$('<td>').append(
 					$('<i>', { 'class': 'far fa-edit', 'color': 'green', 'cursor': 'pointer', 'data-toggle': 'tooltip', 'data-placement': 'top', 'title': 'Editar usuário', 'onClick': 'updateForm(' + user.id + ')' }),
-					$('<i>', { 'class': 'ml-3 far fa-trash-alt', 'color': '#ff4949ba', 'cursor': 'pointer', 'data-toggle': 'tooltip', 'data-placement': 'top', 'title': 'Excluir usuário', 'onClick': 'deleteUsers(' + user.id + ')' })
+					$('<i>', { 'class': 'ml-3 far fa-trash-alt', 'color': '#ff4949ba', 'cursor': 'pointer', 'data-toggle': 'tooltip', 'data-placement': 'top', 'title': 'Excluir usuário', 'onClick': 'confirmDeleteUsers(' + user.id + ')' })
 				)
 			)
 		);
@@ -129,16 +89,16 @@ function renderTable(users) {
 	initTooltips();
 }
 
-function openRegisterForm(userId) {
+function openRegisterForm(idUser) {
 	var ajax = new Ajax({
 		alwaysFn: function(response) {
 			createModal({
 				'modalId': 'modalRegisterUser',
-				'title': (userId ? 'Atualizar' : 'Cadastrar') + ' usuário',
+				'title': (idUser ? 'Atualizar' : 'Cadastrar') + ' usuário',
 				'body': response,
 				'largeModal': true,
-				'textBtnOk': (userId ? 'Atualizar' : 'Salvar'),
-				'classBtnOk': (userId ? 'btn-primary' : 'btn-success'),
+				'textBtnOk': (idUser ? 'Atualizar' : 'Salvar'),
+				'classBtnOk': (idUser ? 'btn-primary' : 'btn-success'),
 				'fnOk': function () {
 					var userData = getFormData($('#formRegisterUser'));
 					var personData = getFormData($('#formRegisterPerson'));
@@ -152,12 +112,12 @@ function openRegisterForm(userId) {
 	ajax.GET('View/Forms/FormRegisterUser.php');
 }
 
-function updateForm(userId) {
-	var data = { 'id': userId };
+function updateForm(idUser) {
+	var data = { 'id': idUser };
 	var ajax = new Ajax({
 		'dataType': 'json',
 		'beforeSendFn': function () {
-			openRegisterForm(userId);
+			openRegisterForm(idUser);
 		},
 		'alwaysFn': function (response) {
 			if (!displayErrors(response)) {
@@ -187,10 +147,3 @@ function parseAccessLevel(accessLevel) {
 			return 'Convidado';
 	}
 }
-
-/*
-<div class="bg-primary text-light m-4 text-center">
-    <span>Adicione um perfil de acesso para essa pessoa</span><br>
-    <span style="font-size: 14px;">O login para acesso será o e-mail da pessoa</span>
-</div>
-*/

@@ -33,7 +33,7 @@ class PersonRepositorySession implements IRepository {
 
 	public function getById(int $id) {
 		foreach ($this->persons as $person) {
-			if ($person->getRecordNumber() == $id) {
+			if ($person->getId() == $id) {
 				return $person;
 			}
 		}

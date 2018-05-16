@@ -2,20 +2,22 @@
 
 class Authentication {
 
-	private $userId;
+	private $idUser;
 	private $userName;
 	private $permissions;
 	private $loginTime;
+	private $firstAccess;
 
-	public function __construct($userId, $userName, $permissions, $loginTime) {
-		$this->userId = $userId;
+	public function __construct($idUser, $userName, $permissions, $loginTime, $firstAccess = true) {
+		$this->idUser = $idUser;
 		$this->userName = $userName;
 		$this->permissions = $permissions;
 		$this->loginTime = $loginTime;
+		$this->firstAccess = $firstAccess;
 	}
 
-	public function getUserId() {
-		return $this->userId;
+	public function getIdUser() {
+		return $this->idUser;
 	}
 
 	public function getUserName() {
@@ -28,6 +30,10 @@ class Authentication {
 
 	public function getLoginTime() {
 		return $this->loginTime;
+	}
+
+	public function isFirstAccess() {
+		return $this->firstAccess;
 	}
 
 }

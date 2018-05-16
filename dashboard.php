@@ -25,6 +25,8 @@
 		<?php
 			require_once "config.php";
 			require_once DIR . "View/menu.php";
+
+			Authenticator::redirectFirstAccess();
 		?>
 	</body>
 </html>

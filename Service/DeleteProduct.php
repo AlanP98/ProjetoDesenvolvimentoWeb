@@ -14,10 +14,10 @@ try {
 			$productRepository = new ProductRepository();
 			echo json_encode($productRepository->batchDelete($_DELETE['ids']));
 		} else {
-			return new ErrorObj(400, 'Nenhum produto foi selecionado.');
+			echo json_encode(new ErrorObj(400, 'Nenhum produto foi selecionado.'));
 		}
 	} else {
-		return new ErrorObj(400, 'DELETE requerido através do método incorreto: "' . $method . '"');
+		echo json_encode(new ErrorObj(400, 'DELETE requerido através do método incorreto: "' . $method . '"'));
 	}
 } catch(Exception $e) {
 	http_response_code(400);

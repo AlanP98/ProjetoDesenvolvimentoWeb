@@ -28,10 +28,8 @@ function login() {
 		}
 	});
 
-	var data = {
+	ajax.POST('Service/Auth.php', {
 		'userName': $('#userName').val(),
 		'password': $('#password').val()
-	};
-
-	ajax.POST('Service/Auth.php', data);
+	});
 }

@@ -8,19 +8,19 @@ class Authenticator {
 
 	public function authenticate($userName, $password) {
 		//TODO: UTILIZAR CRIPTOGRAFIA PARA A SENHA
-		$usersRepository = new UserRepository();
-		$user = $usersRepository->getByUsername($userName);
+		$userRepository = new UserRepository();
+		$user = $userRepository->getByUsername($userName);
 
 		if (! $user) {
 			return new ErrorObj('401', 'Usuário não encontrado.', 'userName');
 		} else {
-			$userObj = new User($user['userName'], $user['password'], $user['accessLevel'], $user['id']);
+			$userObj = new User($user['userName'], $user['password'], $user['accessLevel'], $user['id'], $user['firstAccess']);
 			if ($userObj->checkPassword($password)) {
 				if (self::isLogged()) {
 					session_destroy();
 				}
 
-				$auth = new Authentication($userObj->getId(), $userObj->getUserName(), $userObj->getAccessLevel(), date('d-m-Y H:i:s'));
+				$auth = new Authentication($userObj->getId(), $userObj->getUserName(), $userObj->getAccessLevel(), date('d-m-Y H:i:s'), $userObj->isFirstAccess());
 				$session = Session::getInstance();
 				$session->save('isLogged', true);
 				$session->save('AUTHENTICATION', $auth);
@@ -41,6 +41,15 @@ class Authenticator {
 		$session->destroy();
 		echo "<script>window.location.href='index.php'</script>";
 		die;
+	}
+
+	public static function redirectFirstAccess() {
+		$session = Session::getInstance();
+		$auth = $session->getByKey('AUTHENTICATION');
+		if ($auth->isFirstAccess() && $auth->getPermissions() < 1) {
+			header('Location: updateAccount.php');
+			die;
+		}
 	}
 
 }

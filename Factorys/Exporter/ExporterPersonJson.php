@@ -8,8 +8,9 @@ class ExporterPersonJson extends ExporterPerson {
 		$persons = array();
 
 		foreach($data as $p) {
-			$person = new Person($p['recordNumber'], $p['name'], $p['gender'], $p['email']);
+			$person = new Person($p['id'], $p['name'], $p['gender'], $p['email']);
 			$personArray = $person->getAttributes();
+			unset($personArray['idUser']);
 			$personArray['gender'] = $this->parseGender($person->getGender());
 			$persons[] = $personArray;
 		}

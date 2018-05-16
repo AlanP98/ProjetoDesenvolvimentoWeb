@@ -24,7 +24,7 @@ try {
 
 	$userRepository = new UserRepository();
 	if (!empty($filters['id'])) {
-		$users = $userRepository->getPersonDataByUserId($filters['id']);
+		$users = $userRepository->getPersonDataByIdUser($filters['id']);
 	} else {
 		$users = $userRepository->getByFilters($filters);
 	}

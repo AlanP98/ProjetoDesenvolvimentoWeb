@@ -7,8 +7,9 @@ class ExporterPersonCsv extends ExporterPerson {
 	public function serializeObj(&$data) : string {
 		$lines = array();
 		foreach ($data as $i => $p) {
-			$person = new Person($p['recordNumber'], $p['name'], $p['gender'], $p['email']);
+			$person = new Person($p['id'], $p['name'], $p['gender'], $p['email']);
 			$attrs = $person->getAttributes();
+			unset($attrs['idUser']);
 			$lines[0] = implode(';', array_keys($attrs)) . ';' . PHP_EOL;
 			$lines[$i + 1] = '';
 			foreach($attrs as $property => $value) {

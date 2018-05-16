@@ -9,7 +9,7 @@ try {
 	$filters = array(
 		'id' => (isset($_GET['id']) ? $_GET['id'] : ''),
 		'name' => (isset($_GET['name']) ? $_GET['name'] : ''),
-		'recordNumber' => (isset($_GET['recordNumber']) ? $_GET['recordNumber'] : ''),
+		'filterId' => (isset($_GET['filterId']) ? $_GET['filterId'] : ''),
 		'gender' => (isset($_GET['gender']) ? $_GET['gender'] : '')
 	);
 

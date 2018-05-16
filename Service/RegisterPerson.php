@@ -14,14 +14,13 @@ try {
 }
 
 function registerPerson() {
-	$personId = (isset($_POST['personId']) ? $_POST['personId'] : 0);
-	$recordNumber = (isset($_POST['recordNumber']) ? $_POST['recordNumber'] : '');
+	$personId = (isset($_POST['personId']) && !empty($_POST['personId']) ? $_POST['personId'] : null);
 	$name = (isset($_POST['name']) ? $_POST['name'] : '');
 	$gender = (isset($_POST['gender']) ? $_POST['gender'] : '');
 	$email = (isset($_POST['email']) ? $_POST['email'] : '');
 
-	if (!empty($recordNumber) && !empty($name) && !empty($gender)) {
-		$person = new Person($recordNumber, $name, $gender, $email);
+	if (!empty($name) && !empty($gender)) {
+		$person = new Person($personId, $name, $gender, $email);
 		$personRepository = new PersonRepository();
 
 		$result = false;

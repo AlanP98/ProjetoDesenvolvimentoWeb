@@ -15,17 +15,26 @@ class PersonRepository implements IRepository {
 	}
 
 	public function update($person) {
+		$id = $person->getId();
 		$name = $person->getName();
 		$email = $person->getEmail();
 		$gender = $person->getGender();
-		$recordNumber = $person->getRecordNumber();
+		$idUser = $person->getIdUser();
 
-		$query = 'UPDATE person SET name = ?, email = ?, gender = ? WHERE recordNumber = ?';
+		$query = 'UPDATE person SET name = :name, email = :email, gender = :gender ';
+		if ($idUser) {
+			$query .= ', idUser = :idUser ';
+		}
+		$query .= 'WHERE id = :id';
+
 		$stmt = $this->conn::$connection->prepare($query);
-		$stmt->bindParam(1, $name, PDO::PARAM_STR);
-		$stmt->bindParam(2, $email, PDO::PARAM_STR);
-		$stmt->bindParam(3, $gender, PDO::PARAM_STR);
-		$stmt->bindParam(4, $recordNumber, PDO::PARAM_INT);
+		$stmt->bindParam(':name', $name, PDO::PARAM_STR);
+		$stmt->bindParam(':email', $email, PDO::PARAM_STR);
+		$stmt->bindParam(':gender', $gender, PDO::PARAM_STR);
+		$stmt->bindParam(':id', $id, PDO::PARAM_INT);
+		if ($idUser) {
+			$stmt->bindParam(':idUser', $idUser, PDO::PARAM_INT);
+		}
 		return $stmt->execute();
 	}
 
@@ -46,6 +55,17 @@ class PersonRepository implements IRepository {
 		return $stmt->execute();
 	}
 
+	public function deletePersonUser($personId) {
+		if (empty($personId)) {
+			return false;
+		}
+
+		$query = 'DELETE FROM user WHERE id = (SELECT idUser FROM person WHERE id = ?)';
+		$stmt = $this->conn::$connection->prepare($query);
+		$stmt->bindParam(1, $personId, PDO::PARAM_INT);
+		return $stmt->execute();
+	}
+
 	public function getById(int $id) {
 		$query = 'SELECT * FROM person WHERE id = ?';
 		$stmt = $this->conn::$connection->prepare($query);
@@ -54,7 +74,6 @@ class PersonRepository implements IRepository {
 		return $stmt->fetch();
 	}
 
-
 	public function getByFilters(Array $filters) {
 		$query = 'SELECT * FROM person WHERE name LIKE ? ';
 
@@ -62,15 +81,19 @@ class PersonRepository implements IRepository {
 			array('%' . $filters['name'] . '%', PDO::PARAM_STR)
 		);
 
-		if (!empty($filters['recordNumber'])) {
-			$query .= 'AND recordNumber = ? ';
-			$binds[] = array($filters['recordNumber'], PDO::PARAM_INT);
+		if (!empty($filters['filterId'])) {
+			$query .= 'AND id LIKE ? ';
+			$binds[] = array('%' . $filters['filterId'] . '%', PDO::PARAM_INT);
 		}
 
 		if (!empty($filters['gender'])) {
 			$query .= 'AND gender = ? ';
 			$binds[] = array($filters['gender'], PDO::PARAM_STR);
 		}
+
+		$idConnectedUser = (Session::getInstance()->getByKey('AUTHENTICATION'))->getIdUser();
+		$query .= 'AND (idUser IS NULL OR idUser <> ?) ';
+		$binds[] = array($idConnectedUser, PDO::PARAM_INT);
 
 		$stmt = $this->conn::$connection->prepare($query);
 

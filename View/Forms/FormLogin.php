@@ -1,6 +1,5 @@
 <div class="text-center" style="margin-top:8%;">
 	<form id="formLogin" class="form-signin" action="javascript:void(0);">
-		<!-- <img class="mb-4" src="https://getbootstrap.com/assets/brand/bootstrap-solid.svg" alt="" width="72" height="72"> -->
 		<h1 class="h3 mb-3 font-weight-normal">Login</h1>
 		<label for="userName" class="sr-only">Usuário</label>
 		<input type="text" id="userName" class="form-control" placeholder="Digite o seu usuário" required autofocus>

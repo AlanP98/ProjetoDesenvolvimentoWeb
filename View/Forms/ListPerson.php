@@ -10,8 +10,8 @@
 	<div class="row">
 		<div class="col-2">
 			<div class="form-group">
-				<label for="filterRecordNumber">Número de registro</label>
-				<input type="number" class="form-control" id="filterRecordNumber">
+				<label for="filterId">Número de registro</label>
+				<input type="number" class="form-control" id="filterId">
 			</div>
 		</div>
 		<div class="col-2">

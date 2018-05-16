@@ -14,7 +14,7 @@ class UserRepository implements IRepository {
 	}
 
 	public function update($user) {
-		$id = $user->getUserName();
+		$id = $user->getId();
 		$userName = $user->getUserName();
 		$password = $user->getPassword();
 		$accessLevel = $user->getAccessLevel();
@@ -54,7 +54,7 @@ class UserRepository implements IRepository {
 	}
 
 	public function getByFilters(Array $filters) {
-		$query = 'SELECT u.*, p.id as idPerson, p.name FROM user u ' .
+		$query = 'SELECT u.*, p.id as personId, p.name FROM user u ' .
 			'LEFT JOIN person p ON p.idUser = u.id ' .
 			'WHERE u.userName LIKE ? ';
 
@@ -71,9 +71,9 @@ class UserRepository implements IRepository {
 			$query .= 'AND u.accessLevel IN (' . implode(',', $filters['accessLevel']) . ') ';
 		}
 
-		$connectedUserId = (Session::getInstance()->getByKey('AUTHENTICATION'))->getUserId();
+		$idConnectedUser = (Session::getInstance()->getByKey('AUTHENTICATION'))->getIdUser();
 		$query .= 'AND u.id <> ? ';
-		$binds[] = array($connectedUserId, PDO::PARAM_INT);
+		$binds[] = array($idConnectedUser, PDO::PARAM_INT);
 
 		$stmt = $this->conn::$connection->prepare($query);
 
@@ -94,9 +94,9 @@ class UserRepository implements IRepository {
 		return $stmt->fetch();
 	}
 
-	public function getPersonDataByUserId(int $id) {
+	public function getPersonDataByIdUser(int $id) {
 		$query = 'SELECT p.*, ' .
-			'u.userName, u.accessLevel, u.password ' .
+			'u.id as idUser, u.userName, u.accessLevel, u.password ' .
 			'FROM person p ' .
 			'LEFT JOIN user u ON u.id = p.idUser ' .
 			'WHERE u.id = ?';
@@ -111,6 +111,23 @@ class UserRepository implements IRepository {
 		$stmt = $this->conn::$connection->prepare($query);
 		$stmt->execute();
 		return $stmt->fetchAll();
+	}
+
+	public function getAdministratorsIds() {
+		$query = 'SELECT id FROM user WHERE accessLevel = 2';
+		$stmt = $this->conn::$connection->prepare($query);
+		$stmt->execute();
+		$rs = $stmt->fetchAll();
+		return array_column($rs, 'id');
+	}
+
+	public function isAdministrator(int $id) {
+		$query = 'SELECT accessLevel FROM user WHERE id = ?';
+		$stmt = $this->conn::$connection->prepare($query);
+		$stmt->bindParam(1, $id, PDO::PARAM_INT);
+		$stmt->execute();
+		$rs = $stmt->fetch(PDO::FETCH_ASSOC);
+		return $rs['accessLevel'] == 2;
 	}
 
 }

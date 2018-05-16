@@ -1,16 +1,19 @@
 <?php
-	require_once '../../config.php';
+	$file = '../../config.php';
+	if (file_exists($file)) {
+		require_once $file;
+	}
+
 	requireLogin();
 ?>
 
 <form id="formRegisterPerson" action="javascript:void(0);">
-	<input type="hidden" name="personId" id="personId" value="0">
 	<div class="row">
 		<div class="col-4">
 			<div class="form-group">
-				<label for="recordNumber">Número de registro</label>
-				<input type="number" class="form-control" name="recordNumber" id="recordNumber" aria-describedby="recordNumberHelp">
-				<small id="recordNumberHelp" class="form-text text-muted">Somente números</small>
+				<label for="personId">Número de registro</label>
+				<input type="number" class="form-control" name="personId" id="personId" aria-describedby="personIdHelp" readonly>
+				<small id="personIdHelp" class="form-text text-muted">Número de registro interno</small>
 			</div>
 		</div>
 		<div class="col-8">
@@ -22,7 +25,8 @@
 		<div class="col-6">
 			<div class="form-group">
 				<label for="email">E-mail</label>
-				<input type="email" class="form-control" name="email" id="email">
+				<input type="email" class="form-control" name="email" id="email" onfocusout="checkEmail()">
+				<small id="emailHelper" class="text-danger" style="display: none;">E-mail inválido.</small>
 			</div>
 		</div>
 		<div class="col-6">

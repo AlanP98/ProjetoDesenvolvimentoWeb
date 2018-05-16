@@ -27,12 +27,16 @@ CREATE TABLE IF NOT EXISTS `projeto_desenvolvimento_web`.`user` (
 ) ENGINE = InnoDB DEFAULT CHARACTER SET = utf8;
 
 
-# Atualização: 10/05/2018
+# Atualizações: 10/05/2018
 ALTER TABLE `projeto_desenvolvimento_web`.`person` ADD COLUMN `email` VARCHAR(255) CHARACTER SET 'utf8' COLLATE 'utf8_general_ci' NOT NULL AFTER `gender`;
 ALTER TABLE `projeto_desenvolvimento_web`.`person` CHANGE COLUMN `gender` `gender` CHAR(1) NOT NULL DEFAULT 'O';
 
-# Atualização: 11/05/2018
+# Atualizações: 11/05/2018
 ALTER TABLE `projeto_desenvolvimento_web`.`user` ADD COLUMN `accessLevel` INT(2) NOT NULL DEFAULT 0 AFTER `name`;
 ALTER TABLE `projeto_desenvolvimento_web`.`user` DROP COLUMN `name`;
 ALTER TABLE `projeto_desenvolvimento_web`.`person` ADD COLUMN `idUser` INT(11) NULL AFTER `email`, ADD INDEX `person_user_idx` (`idUser` ASC);
 ALTER TABLE `projeto_desenvolvimento_web`.`person` ADD CONSTRAINT `person_user` FOREIGN KEY (`idUser`) REFERENCES `projeto_desenvolvimento_web`.`user` (`id`) ON DELETE SET NULL ON UPDATE CASCADE;
+
+# Atualizações: 16/05/2018
+ALTER TABLE `projeto_desenvolvimento_web`.`person` DROP COLUMN `recordNumber`, DROP INDEX `recordNumber_UNIQUE`;
+ALTER TABLE `projeto_desenvolvimento_web`.`user` ADD COLUMN `firstAccess` TINYINT NOT NULL DEFAULT 1 AFTER `accessLevel`;

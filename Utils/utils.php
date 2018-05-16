@@ -1,8 +1,11 @@
 <?php
 
 function insertQuery($object, $conn) {
-	$attrs = $object->getAttributes();
 	$table = strtolower($object->getClassName());
+	$attrs = $object->getAttributes();
+	$attrs = array_filter($attrs, function($val) {
+		return (!is_null($val));
+	});
 
 	$columns = $bindValues = '(';
 	$keys = array_keys($attrs);

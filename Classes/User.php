@@ -6,12 +6,14 @@ class User {
 	private $userName;
 	private $password;
 	private $accessLevel;
+	private $firstAccess;
 
-	public function __construct($userName, $password, $accessLevel = 0, $id = 0) {
+	public function __construct($userName, $password, $accessLevel = 0, $id = null, $firstAccess = true) {
 		$this->userName = $userName;
 		$this->password = $password;
 		$this->accessLevel = $accessLevel;
 		$this->id = $id;
+		$this->firstAccess = $firstAccess;
 	}
 
 	public function getId() {
@@ -28,6 +30,10 @@ class User {
 
 	public function getAccessLevel() {
 		return $this->accessLevel;
+	}
+
+	public function isFirstAccess() {
+		return $this->firstAccess;
 	}
 
 	public function checkPassword($password) {

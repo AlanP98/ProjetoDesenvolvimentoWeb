@@ -16,31 +16,35 @@ try {
 }
 
 function registerUser() {
-	fb($_POST);
 
-	$personId = (isset($_POST['personId']) ? $_POST['personId'] : null);
-	$userId = (isset($_POST['userId']) ? $_POST['userId'] : null);
-	$recordNumber = (isset($_POST['recordNumber']) ? $_POST['recordNumber'] : '');
+	$personId = (isset($_POST['personId']) && !empty($_POST['personId']) ? $_POST['personId'] : null);
+	$idUser = (isset($_POST['idUser']) && !empty($_POST['idUser']) ? $_POST['idUser'] : null);
 	$name = (isset($_POST['name']) ? $_POST['name'] : '');
 	$gender = (isset($_POST['gender']) ? $_POST['gender'] : '');
 	$email = (isset($_POST['email']) ? $_POST['email'] : '');
+	$userName = (isset($_POST['userName']) ? $_POST['userName'] : '');
 	$password = (isset($_POST['password']) ? $_POST['password'] : '');
+	$confirmPassword = (isset($_POST['confirmPassword']) ? $_POST['confirmPassword'] : '');
 	$accessLevel = (isset($_POST['accessLevel']) ? $_POST['accessLevel'] : 0);
 
-	if (!empty($recordNumber) && !empty($name) && !empty($gender) && !empty($email) && !empty($password) && $accessLevel != '') {
+	if (!empty($name) && !empty($gender) && !empty($email) &&  !empty($userName) && !empty($password) && $accessLevel != '') {
+		if ($password != $confirmPassword) {
+			return new ErrorObj(400, 'As senhas não conferem.');
+		}
+
 		$userRepository = new UserRepository();
 		$personRepository = new PersonRepository();
 
-		$user = new User($email, $password, $accessLevel, $userId);
-		if (empty($userId)) {
-			$userId = $userRepository->add($user);
+		$user = new User($userName, $password, $accessLevel, $idUser);
+		if (empty($idUser)) {
+			$idUser = $userRepository->add($user);
 		} else {
 			$userRepository->update($user);
 		}
 
 		$result = false;
-		if (!empty($userId)) {
-			$person = new Person($recordNumber, $name, $gender, $email, $userId);
+		if (!empty($idUser)) {
+			$person = new Person($personId, $name, $gender, $email, $idUser);
 			if (empty($personId)) {
 				$result = $personRepository->add($person);
 			} else {
@@ -48,7 +52,6 @@ function registerUser() {
 			}
 		}
 
-		fb($result);
 		return json_encode($result);
 	}
 

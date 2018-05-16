@@ -12,16 +12,23 @@ try {
 
 		if (!empty($deleteIds)) {
 			$userRepository = new UserRepository();
+			$administratorIds = $userRepository->getAdministratorsIds();
+			$deleteAdmins = array_intersect($deleteIds, $administratorIds);
+
+			if (!empty($deleteAdmins)) {
+				echo json_encode(new ErrorObj(400, 'Você não pode excluir a conta de outro administrador.'));
+			}
+
 			if (is_array($deleteIds)) {
 				echo json_encode($userRepository->batchDelete($deleteIds));
 			} else {
 				echo json_encode($userRepository->delete($deleteIds));
 			}
 		} else {
-			return new ErrorObj(400, 'Nenhum produto foi selecionado.');
+			echo json_encode(new ErrorObj(400, 'Nenhum usuário foi selecionado.'));
 		}
 	} else {
-		return new ErrorObj(400, 'DELETE requerido através do método incorreto: "' . $method . '"');
+		echo json_encode(new ErrorObj(400, 'DELETE requerido através do método incorreto: "' . $method . '"'));
 	}
 } catch(Exception $e) {
 	http_response_code(400);
