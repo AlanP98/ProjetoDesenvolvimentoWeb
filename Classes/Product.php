@@ -1,16 +1,14 @@
 <?php
 
 class Product {
-	protected $recordNumber;
-	protected $description;
+	private $id;
+	private $recordNumber;
+	private $description;
 
-	public function __construct($recordNumber, $description) {
+	public function __construct($recordNumber, $description, $id = 0) {
 		$this->recordNumber = $recordNumber;
 		$this->description = $description;
-	}
-
-	public function getAttributes() {
-		return get_object_vars($this);
+		$this->id = $id;
 	}
 
 	public function getRecordNumber() {
@@ -21,6 +19,10 @@ class Product {
 		return $this->description;
 	}
 
+	public function getId() {
+		return $this->id;
+	}
+
 	public function setRecordNumber($recordNumber) {
 		$this->recordNumber = $recordNumber;
 	}
@@ -29,7 +31,16 @@ class Product {
 		$this->description = $description;
 	}
 
+	public function setId($id) {
+		$this->id = $id;
+	}
+
 	public function getClassName() {
 		return get_class($this);
 	}
+
+	public function getAttributes() {
+		return get_object_vars($this);
+	}
+
 }

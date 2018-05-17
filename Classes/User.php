@@ -8,7 +8,7 @@ class User {
 	private $accessLevel;
 	private $firstAccess;
 
-	public function __construct($userName, $password, $accessLevel = 0, $id = null, $firstAccess = true) {
+	public function __construct($userName, $password, $accessLevel = 0, $id = null, $firstAccess = null) {
 		$this->userName = $userName;
 		$this->password = $password;
 		$this->accessLevel = $accessLevel;
@@ -42,6 +42,10 @@ class User {
 
 	public function setId($id) {
 		$this->id = $id;
+	}
+
+	public function setFirstAccess($firstAccess) {
+		$this->firstAccess = $firstAccess;
 	}
 
 	public function getAttributes() {

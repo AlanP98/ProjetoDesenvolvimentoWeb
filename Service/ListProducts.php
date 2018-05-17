@@ -6,15 +6,6 @@ require_once DIR . 'Repositorys/ProductRepository.php';
 
 requireLogin();
 
-// try {
-// 	$productRepository = new ProductRepository();
-// 	$products = $productRepository->getAll();
-// 	echo json_encode($products);
-// } catch(Exception $e) {
-// 	http_response_code(400);
-// 	echo $e->getMessage();
-// }
-
 try {
 	$filters = array(
 		'id' => (isset($_GET['id']) ? $_GET['id'] : ''),

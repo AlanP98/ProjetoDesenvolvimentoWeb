@@ -8,8 +8,10 @@ class ExporterProductJson extends ExporterProduct {
 		$products = array();
 
 		foreach($data as $p) {
-			$product = new Product($p['recordNumber'], $p['description']);
-			$products[] = $product->getAttributes();
+			$product = new Product($p['recordNumber'], $p['description'], $p['id']);
+			$aProduct = $product->getAttributes();
+			unset($aProduct['id']);
+			$products[] = $aProduct;
 		}
 
 		return json_encode($products, JSON_PRETTY_PRINT);

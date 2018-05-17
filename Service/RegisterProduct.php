@@ -5,20 +5,34 @@ require_once DIR . 'Classes/Product.php';
 require_once DIR . 'Repositorys/ProductRepository.php';
 
 requireLogin();
-$response = registerProduct();
-echo json_encode($response);
+
+$module = new Module('cadastrar produtos', 1);
+$result = Authenticator::verifyPermission($module);
+if ($result !== true) {
+	echo json_encode($result);
+	exit;
+}
+
+try {
+	$result = registerProduct();
+	echo json_encode($result);
+} catch(Exception $e) {
+	http_response_code(400);
+	echo $e->getMessage();
+}
+
 
 function registerProduct() {
-	$productId = (isset($_POST['productId']) ? $_POST['productId'] : 0);
+	$productId = (isset($_POST['productId']) ? (empty($_POST['productId']) ? 0 : $_POST['productId']) : 0);
 	$recordNumber = (isset($_POST['recordNumber']) ? $_POST['recordNumber'] : '');
 	$description = (isset($_POST['description']) ? $_POST['description'] : '');
 
 	if (!empty($recordNumber) && !empty($description)) {
 		if (!isValidRecordNumber($recordNumber)) {
-			return (array) new ErrorObj(400, 'Número de registro inválido.', '');
+			return new ErrorObj(400, 'Número de registro inválido.', '');
 		}
 
-		$product = new Product($recordNumber, $description);
+		$product = new Product($recordNumber, $description, $productId);
 		$productRepository = new ProductRepository();
 
 		$result = false;
@@ -31,7 +45,7 @@ function registerProduct() {
 		return (int) $result;
 	}
 
-	return (array) new ErrorObj(400, 'Preencha todos os campos', '');
+	return new ErrorObj(400, 'Preencha todos os campos', '');
 }
 
 function isValidRecordNumber($recordNumber) {

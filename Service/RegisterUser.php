@@ -8,6 +8,15 @@ require_once DIR . 'Repositorys/PersonRepository.php';
 
 requireLogin();
 
+requireLogin();
+
+$module = new Module('cadastrar e atualizar usuários', 2);
+$result = Authenticator::verifyPermission($module);
+if ($result !== true) {
+	echo json_encode($result);
+	exit;
+}
+
 try {
 	echo json_encode(registerUser());
 } catch(Exception $e) {
@@ -25,17 +34,24 @@ function registerUser() {
 	$userName = (isset($_POST['userName']) ? $_POST['userName'] : '');
 	$password = (isset($_POST['password']) ? $_POST['password'] : '');
 	$confirmPassword = (isset($_POST['confirmPassword']) ? $_POST['confirmPassword'] : '');
-	$accessLevel = (isset($_POST['accessLevel']) ? $_POST['accessLevel'] : 0);
+	$accessLevel = (isset($_POST['accessLevel']) ? $_POST['accessLevel'] : null);
+	$accessLevel = (is_null($idUser) ? $accessLevel : null);
+	$updateFirstAccess = (isset($_POST['firstAccess']) ? (bool) $_POST['firstAccess'] : false);
 
-	if (!empty($name) && !empty($gender) && !empty($email) &&  !empty($userName) && !empty($password) && $accessLevel != '') {
+	if (!empty($name) && !empty($gender) && !empty($email) && !empty($userName) && !empty($password) && !(empty($idUser) && $accessLevel == '')) {
 		if ($password != $confirmPassword) {
 			return new ErrorObj(400, 'As senhas não conferem.');
 		}
 
 		$userRepository = new UserRepository();
 		$personRepository = new PersonRepository();
-
 		$user = new User($userName, $password, $accessLevel, $idUser);
+
+		if ($updateFirstAccess) {
+			$user->setFirstAccess(0);
+			Authenticator::updateAuth($user);
+		}
+
 		if (empty($idUser)) {
 			$idUser = $userRepository->add($user);
 		} else {

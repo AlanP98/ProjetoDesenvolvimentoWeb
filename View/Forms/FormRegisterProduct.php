@@ -4,6 +4,7 @@
 ?>
 
 <form id="formRegisterProduct" action="javascript:void(0);">
+	<input type="hidden" name="productId" id="productId">
 	<div class="row">
 		<div class="col-10">
 			<div class="form-group">

@@ -5,32 +5,57 @@ require_once DIR . 'Repositorys/UserRepository.php';
 
 requireLogin();
 
+$module = new Module('excluir usuários', 2);
+$result = Authenticator::verifyPermission($module);
+if ($result !== true) {
+	echo json_encode($result);
+	exit;
+}
+
 try {
+	echo json_encode(deleteUsers());
+} catch(Exception $e) {
+	http_response_code(400);
+	echo $e->getMessage();
+}
+
+function deleteUsers() {
+	$connectedUserId =  Session::getInstance()->getByKey('AUTHENTICATION')->getIdUser();
+
 	if ($_SERVER['REQUEST_METHOD'] === 'DELETE') {
 		parse_str(file_get_contents('php://input'), $_DELETE);
-		$deleteIds = (isset($_DELETE['ids']) ? $_DELETE['ids'] : 0);
+
+		$deleteIds = array();
+		if (isset($_DELETE['self'])) {
+			$deleteIds[] = $connectedUserId;
+		} else {
+			$deleteIds = (isset($_DELETE['ids']) ? $_DELETE['ids'] : 0);
+		}
 
 		if (!empty($deleteIds)) {
 			$userRepository = new UserRepository();
 			$administratorIds = $userRepository->getAdministratorsIds();
 			$deleteAdmins = array_intersect($deleteIds, $administratorIds);
 
-			if (!empty($deleteAdmins)) {
-				echo json_encode(new ErrorObj(400, 'Você não pode excluir a conta de outro administrador.'));
+			if (count($administratorIds) <= count($deleteAdmins)) {
+				return new ErrorObj(400, 'Não foi possível excluir sua conta, pois você é o único administrador cadastrado.');
+			}
+
+			if (!empty(array_diff($deleteAdmins, array($connectedUserId)))) {
+				return new ErrorObj(400, 'Não é possível excluir a conta de outros administradores. Somente o dono da conta pode realizar essa ação.');
 			}
 
 			if (is_array($deleteIds)) {
-				echo json_encode($userRepository->batchDelete($deleteIds));
+				$result = $userRepository->batchDelete($deleteIds);
 			} else {
-				echo json_encode($userRepository->delete($deleteIds));
+				$result = $userRepository->delete($deleteIds);
 			}
+
+			return $result;
 		} else {
-			echo json_encode(new ErrorObj(400, 'Nenhum usuário foi selecionado.'));
+			return new ErrorObj(400, 'Nenhum usuário foi selecionado.');
 		}
 	} else {
-		echo json_encode(new ErrorObj(400, 'DELETE requerido através do método incorreto: "' . $method . '"'));
+		return new ErrorObj(400, 'DELETE requerido através do método incorreto: "' . $method . '"');
 	}
-} catch(Exception $e) {
-	http_response_code(400);
-	echo $e->getMessage();
 }

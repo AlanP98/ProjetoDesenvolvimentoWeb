@@ -31,4 +31,63 @@ class MySqlConnection {
 		}
 	}
 
+	public static function insertQuery($object) {
+		$table = strtolower($object->getClassName());
+		$attrs = $object->getAttributes();
+		$attrs = array_filter($attrs, function($val) {
+			return (!is_null($val));
+		});
+
+		$columns = $bindValues = '(';
+		$keys = array_keys($attrs);
+		$last = end($keys);
+
+		foreach ($keys as $key) {
+			$column = $key . ($last == $key ? ')' : ',');
+			$columns .= $column;
+			$bindValues .= ':' . $column;
+		}
+
+		$query = 'INSERT INTO ' . $table . ' ' . $columns . ' VALUES ' . $bindValues;
+		$stmt = self::$connection->prepare($query);
+
+		foreach ($attrs as $key => $value) {
+			$stmt->bindParam(":$key", strval($value));
+		}
+
+		$st = $stmt->execute();
+		if ($st === true) {
+			return self::$connection->lastInsertId();
+		} else {
+			return null;
+		}
+	}
+
+	public static function updateQuery($object) {
+		$table = strtolower($object->getClassName());
+		$attrs = $object->getAttributes();
+		$attrs = array_filter($attrs, function($val) {
+			return (!is_null($val));
+		});
+
+		$binds = array();
+		$keys = array_keys($attrs);
+		$last = end($keys);
+		$query = 'UPDATE ' . $table . ' SET ';
+
+		foreach ($attrs as $key => $value) {
+			$query .= $key . ' = :' . $key . ($last != $key ? ', ' : ' ');
+			$binds[$key] = $value;
+		}
+
+		$query .= 'WHERE id = :id ';
+
+		$stmt = self::$connection->prepare($query);
+		foreach ($binds as $key => $value) {
+			$stmt->bindParam(":$key", strval($value));
+		}
+
+		return $stmt->execute();
+	}
+
 }

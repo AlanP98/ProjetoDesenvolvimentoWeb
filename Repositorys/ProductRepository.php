@@ -11,18 +11,11 @@ class ProductRepository implements IRepository {
 	}
 
 	public function add($product) {
-		return insertQuery($product, $this->conn::$connection);
+		return $this->conn::insertQuery($product);
 	}
 
 	public function update($product) {
-		$description = $product->getDescription();
-		$recordNumber = $product->getRecordNumber();
-
-		$query = 'UPDATE product SET description = ? WHERE recordNumber = ?';
-		$stmt = $this->conn::$connection->prepare($query);
-		$stmt->bindParam(1, $description, PDO::PARAM_STR);
-		$stmt->bindParam(2, $recordNumber, PDO::PARAM_INT);
-		return $stmt->execute();
+		return $this->conn::updateQuery($product);
 	}
 
 	public function delete($productId) {

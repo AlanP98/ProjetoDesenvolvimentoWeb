@@ -10,22 +10,11 @@ class UserRepository implements IRepository {
 	}
 
 	public function add($user) {
-		return insertQuery($user, $this->conn::$connection);
+		return $this->conn::insertQuery($user);
 	}
 
 	public function update($user) {
-		$id = $user->getId();
-		$userName = $user->getUserName();
-		$password = $user->getPassword();
-		$accessLevel = $user->getAccessLevel();
-
-		$query = 'UPDATE user SET userName = ?, password = ?, accessLevel = ? WHERE id = ?';
-		$stmt = $this->conn::$connection->prepare($query);
-		$stmt->bindParam(1, $userName, PDO::PARAM_STR);
-		$stmt->bindParam(2, $password, PDO::PARAM_STR);
-		$stmt->bindParam(3, $accessLevel, PDO::PARAM_INT);
-		$stmt->bindParam(4, $id, PDO::PARAM_INT);
-		return $stmt->execute();
+		return $this->conn::updateQuery($user);
 	}
 
 	public function delete($id) {

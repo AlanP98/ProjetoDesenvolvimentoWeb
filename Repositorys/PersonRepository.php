@@ -11,31 +11,11 @@ class PersonRepository implements IRepository {
 	}
 
 	public function add($person) {
-		return insertQuery($person, $this->conn::$connection);
+		return $this->conn::insertQuery($person);
 	}
 
 	public function update($person) {
-		$id = $person->getId();
-		$name = $person->getName();
-		$email = $person->getEmail();
-		$gender = $person->getGender();
-		$idUser = $person->getIdUser();
-
-		$query = 'UPDATE person SET name = :name, email = :email, gender = :gender ';
-		if ($idUser) {
-			$query .= ', idUser = :idUser ';
-		}
-		$query .= 'WHERE id = :id';
-
-		$stmt = $this->conn::$connection->prepare($query);
-		$stmt->bindParam(':name', $name, PDO::PARAM_STR);
-		$stmt->bindParam(':email', $email, PDO::PARAM_STR);
-		$stmt->bindParam(':gender', $gender, PDO::PARAM_STR);
-		$stmt->bindParam(':id', $id, PDO::PARAM_INT);
-		if ($idUser) {
-			$stmt->bindParam(':idUser', $idUser, PDO::PARAM_INT);
-		}
-		return $stmt->execute();
+		return $this->conn::updateQuery($person);
 	}
 
 	public function delete($id) {

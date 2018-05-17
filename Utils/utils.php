@@ -1,38 +1,7 @@
 <?php
 
-function insertQuery($object, $conn) {
-	$table = strtolower($object->getClassName());
-	$attrs = $object->getAttributes();
-	$attrs = array_filter($attrs, function($val) {
-		return (!is_null($val));
-	});
-
-	$columns = $bindValues = '(';
-	$keys = array_keys($attrs);
-	$last = end($keys);
-
-	foreach ($keys as $key) {
-		$column = $key . ($last == $key ? ')' : ',');
-		$columns .= $column;
-		$bindValues .= ':' . $column;
-	}
-
-	$query = 'INSERT INTO ' . $table . ' ' . $columns . ' VALUES ' . $bindValues;
-	$stmt = $conn->prepare($query);
-
-	foreach ($attrs as $key => $value) {
-		$stmt->bindParam(":$key", strval($value));
-	}
-
-	$st = $stmt->execute();
-	if ($st === true) {
-		return $conn->lastInsertId();
-	} else {
-		return null;
-	}
-}
-
 class ErrorObj {
+
 	public $errorCode;
 	public $errorMessage;
 	public $element;
@@ -42,4 +11,33 @@ class ErrorObj {
 		$this->errorMessage = $errorMessage;
 		$this->element = $element;
 	}
+
+}
+
+class Module {
+
+	private $name;
+	private $minimumAccessLevel;
+
+	public function __construct($name, $minimumAccessLevel) {
+		$this->name = $name;
+		$this->minimumAccessLevel = $minimumAccessLevel;
+	}
+
+	public function getName() {
+		return $this->name;
+	}
+
+	public function setName($name) {
+		$this->name = $name;
+	}
+
+	public function getMinimumAccessLevel() {
+		return $this->minimumAccessLevel;
+	}
+
+	public function setMinimumAccessLevel($minimumAccessLevel) {
+		$this->minimumAccessLevel = $minimumAccessLevel;
+	}
+
 }

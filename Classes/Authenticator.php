@@ -20,14 +20,24 @@ class Authenticator {
 					session_destroy();
 				}
 
-				$auth = new Authentication($userObj->getId(), $userObj->getUserName(), $userObj->getAccessLevel(), date('d-m-Y H:i:s'), $userObj->isFirstAccess());
-				$session = Session::getInstance();
-				$session->save('isLogged', true);
-				$session->save('AUTHENTICATION', $auth);
-				return $auth;
+				return self::updateAuth($userObj);
 			} else {
 				return new ErrorObj('401', 'Senha incorreta.', 'password');
 			}
+		}
+	}
+
+	public static function updateAuth($user = null) {
+		$session = Session::getInstance();
+
+		if ($user instanceof User) {
+			$auth = new Authentication($user->getId(), $user->getUserName(), $user->getAccessLevel(), date('d-m-Y H:i:s'), $user->isFirstAccess());
+			$session->save('isLogged', true);
+			$session->save('AUTHENTICATION', $auth);
+			return $auth;
+		} else {
+			$session->save('isLogged', false);
+			return null;
 		}
 	}
 
@@ -44,12 +54,30 @@ class Authenticator {
 	}
 
 	public static function redirectFirstAccess() {
-		$session = Session::getInstance();
-		$auth = $session->getByKey('AUTHENTICATION');
-		if ($auth->isFirstAccess() && $auth->getPermissions() < 1) {
+		if (self::isFirstAccess()) {
 			header('Location: updateAccount.php');
 			die;
 		}
+	}
+
+	public static function isFirstAccess() {
+		$session = Session::getInstance();
+		$auth = $session->getByKey('AUTHENTICATION');
+		return ($auth->isFirstAccess());
+	}
+
+	public static function verifyPermission($module) {
+		$session = Session::getInstance();
+		$auth = $session->getByKey('AUTHENTICATION');
+
+		$isModule = ($module instanceof Module);
+		$havePermission = ($auth->getPermissions() >= $module->getMinimumAccessLevel());
+
+		if ($isModule && $havePermission) {
+			return true;
+		}
+
+		return new ErrorObj(401, 'Você não possui permissão para ' . $module->getName());
 	}
 
 }

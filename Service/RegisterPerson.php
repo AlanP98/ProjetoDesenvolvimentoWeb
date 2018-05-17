@@ -6,6 +6,13 @@ require_once DIR . 'Repositorys/PersonRepository.php';
 
 requireLogin();
 
+$module = new Module('cadastrar pessoas', 1);
+$result = Authenticator::verifyPermission($module);
+if ($result !== true) {
+	echo json_encode($result);
+	exit;
+}
+
 try {
 	echo json_encode(registerPerson());
 } catch(Exception $e) {

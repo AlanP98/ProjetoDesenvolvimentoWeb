@@ -1,3 +1,10 @@
+<?php
+	require_once "config.php";
+	requireLogin();
+
+	if (Authenticator::isFirstAccess()) {
+?>
+
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
@@ -23,21 +30,15 @@
 
 </head>
 <body>
-	<?php
-		require_once "config.php";
-		requireLogin();
-	?>
-
 	<div class="container">
 		<div class="alert alert-warning">
-			<strong>Este é o seu primeiro login!</strong><br>
-			<span>É importante que você atualize seus dados, principalmente a senha.</span>
+			<strong>Este é o seu primeiro acesso!</strong><br>
+			<span>Atualize seus dados antes de acessar o sistema.</span>
 		</div>
 
-		<div class="mt-5">
-			<i class="far fa-check-circle text-success ml-5" style="font-size: 50px; cursor: pointer;" data-toggle="tooltip" data-placement="bottom" title="Atualizar meus dados" onclick="saveUser('self')"></i>
-			<i class="far fa-arrow-alt-circle-right text-warning ml-5" style="font-size: 50px; cursor: pointer;" data-toggle="tooltip" data-placement="bottom" title="Pular esta etapa"></i>
-			<i class="fas fa-user-times text-danger ml-5" style="font-size: 50px; cursor: pointer;" data-toggle="tooltip" data-placement="bottom" title="Excluir minha conta" onclick="deleteAccount()"></i>
+		<div class="mt-5 text-right">
+			<i class="far fa-check-circle text-success ml-5" style="font-size: 50px; cursor: pointer;" data-toggle="tooltip" data-placement="bottom" title="Atualizar meus dados" onclick="saveUser('firstAccess')"></i>
+			<i class="fas fa-user-times text-danger ml-5" style="font-size: 50px; cursor: pointer;" data-toggle="tooltip" data-placement="bottom" title="Excluir minha conta" onclick="confirmDeleteUsers([], 1)"></i>
 			<i class="fas fa-power-off ml-5 text-secondary" style="font-size: 50px; cursor: pointer;" data-toggle="tooltip" data-placement="bottom" title="Encerrar sessão" onclick="confirmLogout()"></i>
 		</div>
 
@@ -54,3 +55,9 @@
 	</script>
 </body>
 </html>
+
+<?php
+	} else {
+		Authenticator::logout();
+	}
+?>

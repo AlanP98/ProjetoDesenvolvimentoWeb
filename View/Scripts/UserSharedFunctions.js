@@ -9,18 +9,14 @@ function confirmLogout() {
 		'textBtnCancel': 'Não',
 		'classBtnOk': 'btn-danger',
 		'fnOk': function () {
-			new Ajax().GET('Service/Logout.php');
-			window.location.href = 'index.php';
+			logout();
 		}
 	});
 }
 
-function deleteAccount() {
-	createAlert({
-		'alertType': 'danger',
-		'title': 'Ops...',
-		'msg': 'Ainda não é possível excluir a sua conta.'
-	});
+function logout() {
+	new Ajax().GET('Service/Logout.php');
+	window.location.href = 'index.php';
 }
 
 function openRegistrationForm(options) {
@@ -36,7 +32,6 @@ function openRegistrationForm(options) {
 		}
 
 		if (typeof bindRegistrationEvents == 'function') {
-			debug('BIND');
 			bindRegistrationEvents();
 		}
 	});
@@ -48,11 +43,11 @@ function bindRegistrationEvents() {
 	});
 
 	$('#deleteAccount').click(function () {
-		deleteAccount();
+		confirmDeleteUsers([], 1);
 	});
 }
 
-function confirmDeleteUsers(ids) {
+function confirmDeleteUsers(ids, self) {
 	createModal({
 		'modalId': 'modalRemoveUser',
 		'body': 'Você realmente deseja excluir este usuário?',
@@ -61,36 +56,36 @@ function confirmDeleteUsers(ids) {
 		'textBtnCancel': 'Não',
 		'classBtnOk': 'btn-danger',
 		'fnOk': function () {
-			deleteUsers(ids);
+			deleteUsers(ids, self);
 		}
 	});
 }
 
-function deleteUsers(ids) {
+function deleteUsers(ids, self) {
 	if (!Array.isArray(ids)) {
 		ids = [ids];
 	}
 
 	var data = { 'ids': ids };
+	if (self) {
+		data.self = true;
+	}
+
 	var ajax = new Ajax({
 		'dataType': 'json',
 		alwaysFn: function (response) {
 			destroyModal('modalRemoveUser');
 
-			if (response == true) {
-				createAlert({
-					'alertType': 'success',
-					'title': 'Sucesso',
-					'msg': 'Usuário excluído!'
-				});
-			} else {
-				var msg = (response.errorMessage || response.responseText);
-				createModal({
-					'title': 'Não foi possível excluir',
-					'hideBtnCanel': true,
-					'textBtnOk': 'Fechar',
-					'body': msg
-				});
+			if (!displayErrors(response)) {
+				if (self) {
+					logout();
+				} else {
+					createAlert({
+						'alertType': 'success',
+						'title': 'Sucesso',
+						'msg': 'Usuário excluído!'
+					});
+				}
 			}
 
 			list();
@@ -105,6 +100,7 @@ function saveUser(user) {
 
 	switch (user) {
 		case 'self':
+		case 'firstAccess':
 			messages[0] = 'Atualizar cadastro';
 			messages[1] = 'Os seus dados cadastrais serão atualizados. Você confirma a ação?';
 			messages[2] = 'Seus dados cadastrais foram atualizados com sucesso!';
@@ -133,20 +129,28 @@ function saveUser(user) {
 			var userData = getFormData($('#formRegisterUser'));
 			var personData = getFormData($('#formRegisterPerson'));
 			var data = $.extend({}, userData, personData);
+			if (user == 'firstAccess') {
+				data.firstAccess = true;
+			}
+
 			var ajax = new Ajax({
 				'dataType': 'json',
 				'alwaysFn': function (response) {
 					destroyModal('modalSaveAccount');
 					if (!displayErrors(response)) {
 						destroyModal('userPersonForm');
-						createAlert({
-							'alertType': 'success',
-							'title': 'Sucesso',
-							'msg': messages[2]
-						});
+						if (user == 'firstAccess') {
+							window.location.href = 'dashboard.php';
+						} else {
+							createAlert({
+								'alertType': 'success',
+								'title': 'Sucesso',
+								'msg': messages[2]
+							});
+						}
 					}
 
-					if (user != 'self') {
+					if (typeof list == 'function') {
 						list();
 					}
 				}
@@ -185,7 +189,7 @@ function updateUserData(userData) {
 	$('#confirmPassword').val(userData.password || '');
 	$('#accessLevel').val(userData.accessLevel || 0);
 
-	if (userData.accessLevel == 2) {
+	if (userData.id > 0) {
 		$('#accessLevel').attr('disabled', true);
 	}
 }
