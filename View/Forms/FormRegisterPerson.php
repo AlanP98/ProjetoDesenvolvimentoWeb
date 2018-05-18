@@ -4,7 +4,7 @@
 		require_once $file;
 	}
 
-	requireLogin();
+	Authenticator::requireLogin();
 ?>
 
 <form id="formRegisterPerson" action="javascript:void(0);">

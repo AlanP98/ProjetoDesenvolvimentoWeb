@@ -1,3 +1,6 @@
+/**
+ * @author Alan Possamai <alanp5sa@gmail.com>
+ */
 class Ajax {
 	constructor(options) {
 		this.options = (typeof options === "undefined" ? {} : options);
@@ -63,10 +66,6 @@ class Ajax {
 
 		// return deferred.promise();
 	}
-}
-
-function debug(o) {
-	console.log(o);
 }
 
 function getFormData(form) {
@@ -238,4 +237,56 @@ function initTooltips() {
 			$('[data-toggle="tooltip"], .tooltip').tooltip("hide");
 		});
 	}, 500);
-};
+}
+
+
+// MANIPULAÇÃO DE COOKIES
+
+/**
+ * @author Mário Valney <mariovalney@gmail.com>
+ * Adapted by Alan Possamai <alanp5sa@gmail.com>
+ */
+function setCookie(name, value, duration) {
+	var cookie = name + "=" + escape(value) +
+		((duration) ? "; duration=" + duration.toUTCString() : "");
+
+	document.cookie = cookie;
+}
+
+/**
+ * @author Mário Valney <mariovalney@gmail.com>
+ */
+function getCookie(name) {
+	var cookies = document.cookie;
+	var prefix = name + "=";
+	var begin = cookies.indexOf("; " + prefix);
+
+	if (begin == -1) {
+
+		begin = cookies.indexOf(prefix);
+
+		if (begin != 0) {
+			return null;
+		}
+
+	} else {
+		begin += 2;
+	}
+
+	var end = cookies.indexOf(";", begin);
+
+	if (end == -1) {
+		end = cookies.length;
+	}
+
+	return unescape(cookies.substring(begin + prefix.length, end));
+}
+
+/**
+ * @author Mário Valney <mariovalney@gmail.com>
+ */
+function deleteCookie(name) {
+	if (getCookie(name)) {
+		document.cookie = name + "=" + "; expires=Thu, 01-Jan-70 00:00:01 GMT";
+	}
+}

@@ -3,14 +3,8 @@
 require_once '../config.php';
 require_once DIR . 'Repositorys/ProductRepository.php';
 
-requireLogin();
-
-$module = new Module('excluir produtos', 2);
-$result = Authenticator::verifyPermission($module);
-if ($result !== true) {
-	echo json_encode($result);
-	exit;
-}
+Authenticator::requireLogin();
+Authenticator::verifyPermission('DELETE_PRODUCT');
 
 try {
 	$method = $_SERVER['REQUEST_METHOD'];

@@ -1,4 +1,8 @@
 $(function() {
+	if (getCookie('accessPermission') < 1) {
+		$('#registerProduct').hide();
+	}
+
 	list();
 
 	$('#toggleFilters').click(function () {
@@ -96,6 +100,8 @@ function deleteProducts(ids) {
 }
 
 function renderTable(products) {
+	var access = getCookie('accessPermission');
+
 	$('#listProductsContent').html('');
 
 	var content = getContentEmptySearch(products);
@@ -109,13 +115,16 @@ function renderTable(products) {
 	}
 
 	$.each(products, function(i, product) {
+		var updateBtn = $('<i>', { 'class': 'far fa-edit', 'color': 'green', 'cursor': 'pointer', 'data-toggle': 'tooltip', 'data-placement': 'top', 'title': 'Editar produto', 'onClick': 'updateForm(' + product.id + ')' });
+		var deleteBtn = $('<i>', { 'class': 'ml-3 far fa-trash-alt', 'color': '#ff4949ba', 'cursor': 'pointer', 'data-toggle': 'tooltip', 'data-placement': 'top', 'title': 'Excluir produto', 'onClick': 'deleteProducts(' + product.id + ')' });
+
 		$('#listProductsContent').append(
 			$('<tr>').append(
 				$('<td>', {'html': product.recordNumber}),
 				$('<td>', {'html': product.description}),
 				$('<td>').append(
-					$('<i>', { 'class': 'far fa-edit', 'color': 'green', 'cursor': 'pointer', 'data-toggle': 'tooltip', 'data-placement': 'top', 'title': 'Editar produto', 'onClick': 'updateForm(' + product.id + ')' }),
-					$('<i>', { 'class': 'ml-3 far fa-trash-alt', 'color': '#ff4949ba', 'cursor': 'pointer', 'data-toggle': 'tooltip', 'data-placement': 'top', 'title': 'Excluir produto', 'onClick': 'deleteProducts(' + product.id + ')' })
+					(access >= 1 ? updateBtn : ''),
+					(access >= 2 ? deleteBtn : ''),
 				)
 			)
 		);

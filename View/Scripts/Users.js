@@ -59,6 +59,38 @@ function save(data) {
 	ajax.POST('Service/RegisterUser.php', data);
 }
 
+function attachUser() {
+	createModal({
+		'modalId': 'modalSaveAccount',
+		'title': 'Vincular usuário',
+		'body': 'Um perfil de acesso será cadastrado para a pessoa. Você confirma a ação?',
+		'textBtnOk': 'Sim',
+		'classBtnOk': 'btn-success',
+		'fnOk': function () {
+			var data = getFormUserValues();
+
+			var ajax = new Ajax({
+				'dataType': 'json',
+				'alwaysFn': function (response) {
+					destroyModal('modalSaveAccount');
+					list();
+
+					if (!displayErrors(response)) {
+						destroyModal('userPersonForm');
+						createAlert({
+							'alertType': 'success',
+							'title': 'Sucesso',
+							'msg': 'Perfil de acesso cadastrado com sucesso!'
+						});
+					}
+				}
+			});
+
+			ajax.POST('Service/RegisterUser.php', data);
+		}
+	});
+}
+
 function renderTable(users) {
 	$('#listUsersContent').html('');
 

@@ -1,6 +1,6 @@
 <?php
 	require_once '../../config.php';
-	requireLogin();
+	Authenticator::requireLogin();
 ?>
 
 <form id="formExportPerson" action="javascript:void(0);">
@@ -24,4 +24,4 @@
 	<div class="form-control editable" rows="5" id="result" contenteditable="true"></div>
 </div>
 
-<script type="text/javascript" src="View/Scripts/FormExportPersons.js"></script>
+<script type="text/javascript" src="View/Scripts/ExportPersons.js"></script>

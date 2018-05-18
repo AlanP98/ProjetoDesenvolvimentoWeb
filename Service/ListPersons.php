@@ -4,7 +4,7 @@ require_once '../config.php';
 require_once DIR . 'Classes/Person.php';
 require_once DIR . 'Repositorys/PersonRepository.php';
 
-requireLogin();
+Authenticator::requireLogin();
 
 try {
 	$personRepository = new PersonRepository();

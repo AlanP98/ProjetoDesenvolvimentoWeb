@@ -26,7 +26,7 @@
 	<?php
 		require_once "config.php";
 
-		if (isLogged()) {
+		if (Authenticator::isLogged()) {
 			header('Location: dashboard.php');
 		} else {
 			require_once DIR . "View/Forms/FormLogin.php";

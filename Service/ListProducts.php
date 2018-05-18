@@ -4,7 +4,7 @@ require_once '../config.php';
 require_once DIR . 'Classes/Product.php';
 require_once DIR . 'Repositorys/ProductRepository.php';
 
-requireLogin();
+Authenticator::requireLogin();
 
 try {
 	$filters = array(

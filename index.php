@@ -28,7 +28,12 @@
 	<div class="container-fluid">
 		<?php
 			require_once 'config.php';
-			require_once DIR . 'View/home.php';
+
+			if (Authenticator::isLogged()) {
+				header('Location: dashboard.php');
+			} else {
+				require_once DIR . 'View/home.php';
+			}
 		?>
 	</div>
 </body>

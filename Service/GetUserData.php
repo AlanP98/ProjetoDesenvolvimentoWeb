@@ -3,7 +3,7 @@
 require_once '../config.php';
 require_once DIR . 'Repositorys/PersonRepository.php';
 require_once DIR . 'Repositorys/UserRepository.php';
-requireLogin();
+Authenticator::requireLogin();
 
 $auth = Session::getInstance()->getByKey('AUTHENTICATION');
 $idUser = $auth->getIdUser();

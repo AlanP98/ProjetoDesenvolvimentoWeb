@@ -25,6 +25,13 @@ class PersonRepository implements IRepository {
 		return $stmt->execute();
 	}
 
+	public function deleteByUserId($idUser) {
+		$query = 'DELETE FROM person WHERE idUser = ?';
+		$stmt = $this->conn::$connection->prepare($query);
+		$stmt->bindParam(1, $idUser, PDO::PARAM_INT);
+		return $stmt->execute();
+	}
+
 	public function batchDelete($ids) {
 		if (!is_array($ids)) {
 			return false;
@@ -52,6 +59,19 @@ class PersonRepository implements IRepository {
 		$stmt->bindParam(1, $id, PDO::PARAM_INT);
 		$stmt->execute();
 		return $stmt->fetch();
+	}
+
+	public function hasUser(int $id) {
+		$query = 'SELECT u.id ' .
+			'FROM user u ' .
+			'JOIN person p ON p.idUser = u.id ' .
+			'WHERE p.id = ?';
+
+		$stmt = $this->conn::$connection->prepare($query);
+		$stmt->bindParam(1, $id, PDO::PARAM_INT);
+		$stmt->execute();
+		$rs = $stmt->fetch();
+		return $rs['id'];
 	}
 
 	public function getByFilters(Array $filters) {
@@ -82,8 +102,7 @@ class PersonRepository implements IRepository {
 		}
 
 		$stmt->execute();
-		$res = $stmt->fetchAll();
-		return $res;
+		return $stmt->fetchAll();
 	}
 
 	public function getAll() {

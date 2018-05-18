@@ -17,18 +17,7 @@ Session::getInstance();
 try {
 	MySqlConnection::getConnection(DSN, USER, PASSWORD);
 } catch(Exception $e) {
-	exit('Não foi possível conectar-se à base de dados.');
-}
-
-function isLogged() {
-	return Authenticator::isLogged();
-}
-
-function requireLogin() {
-	// $auth = Session::getInstance()->getByKey('AUTHENTICATION');
-	//TODO: validar tempo de sessão - permitir até 30 min sem atividade
-
-	if (!isLogged()) {
-		Authenticator::logout();
-	}
+	$msg = '<div class="p-5 text-center text-white bg-danger"><p style="font-size:25px;"><strong>Não foi possível conectar-se à base de dados.</strong></p><p class="mt-5">Verifique se a base de dados foi criada. Para criá-la execute o SQL em "' . DIR . 'Utils/DBDefinitions.sql"</p><p>As configurações de acesso à base de dados podem ser alteradas no arquivo config.php</p></div>';
+	http_response_code(403);
+	exit($msg);
 }

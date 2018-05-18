@@ -6,16 +6,8 @@ require_once DIR . 'Classes/Person.php';
 require_once DIR . 'Repositorys/UserRepository.php';
 require_once DIR . 'Repositorys/PersonRepository.php';
 
-requireLogin();
-
-requireLogin();
-
-$module = new Module('cadastrar e atualizar usuários', 2);
-$result = Authenticator::verifyPermission($module);
-if ($result !== true) {
-	echo json_encode($result);
-	exit;
-}
+Authenticator::requireLogin();
+Authenticator::verifyPermission('WRITE_USER');
 
 try {
 	echo json_encode(registerUser());
@@ -45,7 +37,7 @@ function registerUser() {
 
 		$userRepository = new UserRepository();
 		$personRepository = new PersonRepository();
-		$user = new User($userName, $password, $accessLevel, $idUser);
+		$user = new User($idUser, $userName, $password, $accessLevel);
 
 		if ($updateFirstAccess) {
 			$user->setFirstAccess(0);

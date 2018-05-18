@@ -3,7 +3,8 @@
 require_once '../config.php';
 require_once DIR . 'Repositorys/UserRepository.php';
 
-requireLogin();
+Authenticator::requireLogin();
+Authenticator::verifyPermission('WRITE_USER');
 
 try {
 	$filters = array(

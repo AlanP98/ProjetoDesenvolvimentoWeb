@@ -1,4 +1,8 @@
 $(function () {
+	if (getCookie('accessPermission') < 1) {
+		$('#registerPerson').hide();
+	}
+
 	list();
 
 	$('#toggleFilters').click(function () {
@@ -25,7 +29,7 @@ $(function () {
 function list() {
 	var data = {
 		'name': $('#filterName').val(),
-		'id': $('#filterId').val(),
+		'filterId': $('#filterId').val(),
 		'gender': $('#filterGender option:selected').val()
 	};
 
@@ -121,9 +125,10 @@ function openRegisterForm(personId) {
 }
 
 function renderTable(persons) {
+	var access = getCookie('accessPermission');
 	$('#listPersonsContent').html('');
-
 	var content = getContentEmptySearch(persons);
+
 	if (content) {
 		$('#listPersons').hide();
 		$('#resultSearch').html(content);
@@ -134,9 +139,12 @@ function renderTable(persons) {
 	}
 
 	$.each(persons, function (i, person) {
-		var btnTurnUser = $('<i>', { 'class': 'fas fa-user-plus', 'color': '#007bff', 'cursor': 'pointer', 'data-toggle': 'tooltip', 'data-placement': 'top', 'title': 'Conceder perfil de acesso', 'onClick': 'turnUser(' + person.id + ')' });
-		var btnIconUser = $('<i>', { 'class': 'fas fa-user-times', 'color': '#ffb224d4', 'cursor': 'pointer', 'data-toggle': 'tooltip', 'data-placement': 'top', 'title': 'Remover perfil de acesso', 'onClick': 'confirmDeleteUsers(' + person.idUser + ')' });
+		var btnTurnUser = $('<i>', { 'class': 'ml-3 fas fa-user-plus', 'color': '#007bff', 'cursor': 'pointer', 'data-toggle': 'tooltip', 'data-placement': 'top', 'title': 'Conceder perfil de acesso', 'onClick': 'turnUser(' + person.id + ')' });
+		var btnIconUser = $('<i>', { 'class': 'ml-3 fas fa-user-times', 'color': '#ffb224d4', 'cursor': 'pointer', 'data-toggle': 'tooltip', 'data-placement': 'top', 'title': 'Remover perfil de acesso', 'onClick': 'confirmDeleteUsers(' + person.idUser + ')' });
 		var appendBtn = (person.idUser > 0 ? btnIconUser : btnTurnUser);
+
+		var updateBtn = $('<i>', { 'class': 'ml-3 far fa-edit', 'color': 'green', 'cursor': 'pointer', 'data-toggle': 'tooltip', 'data-placement': 'top', 'title': 'Editar pessoa', 'onClick': 'updateForm(' + person.id + ')' });
+		var deleteBtn = $('<i>', { 'class': 'ml-3 far fa-trash-alt', 'color': '#ff4949ba', 'cursor': 'pointer', 'data-toggle': 'tooltip', 'data-placement': 'top', 'title': 'Excluir pessoa', 'onClick': 'confirmDeletePersons(' + person.id + ')' });
 
 		$('#listPersonsContent').append(
 			$('<tr>').append(
@@ -145,9 +153,9 @@ function renderTable(persons) {
 				$('<td>', { 'html': person.email }),
 				$('<td>', { 'html': getGender(person.gender) }),
 				$('<td>').append(
-					appendBtn,
-					$('<i>', { 'class': 'ml-3 far fa-edit', 'color': 'green', 'cursor': 'pointer', 'data-toggle': 'tooltip', 'data-placement': 'top', 'title': 'Editar pessoa', 'onClick': 'updateForm(' + person.id + ')' }),
-					$('<i>', { 'class': 'ml-3 far fa-trash-alt', 'color': '#ff4949ba', 'cursor': 'pointer', 'data-toggle': 'tooltip', 'data-placement': 'top', 'title': 'Excluir pessoa', 'onClick': 'confirmDeletePersons(' + person.id + ')' })
+					(access >= 1 ? updateBtn : ''),
+					(access >= 2 ? appendBtn : ''),
+					(access >= 2 ? deleteBtn : '')
 				)
 			)
 		);
@@ -157,7 +165,6 @@ function renderTable(persons) {
 }
 
 function updateForm(personId) {
-	var data = { 'id': personId };
 	var ajax = new Ajax({
 		'dataType': 'json',
 		'beforeSendFn': function () {
@@ -170,7 +177,7 @@ function updateForm(personId) {
 		}
 	});
 
-	ajax.GET('Service/GetPersons.php', data);
+	ajax.GET('Service/GetPersons.php', { 'id': personId });
 }
 
 function getPersonData(personId) {
@@ -209,7 +216,7 @@ function turnUser(personId) {
 		'textBtnOk': 'Salvar',
 		'classBtnOk': 'btn-success',
 		'fnOk': function () {
-			saveUser('new');
+			attachUser();
 			list();
 		},
 		'fnAfterOpen': function() {

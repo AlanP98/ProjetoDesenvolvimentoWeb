@@ -8,11 +8,11 @@ class User {
 	private $accessLevel;
 	private $firstAccess;
 
-	public function __construct($userName, $password, $accessLevel = 0, $id = null, $firstAccess = null) {
+	public function __construct($id, $userName, $password, $accessLevel = 0, $firstAccess = null) {
+		$this->id = $id;
 		$this->userName = $userName;
 		$this->password = $password;
 		$this->accessLevel = $accessLevel;
-		$this->id = $id;
 		$this->firstAccess = $firstAccess;
 	}
 
@@ -42,6 +42,14 @@ class User {
 
 	public function setId($id) {
 		$this->id = $id;
+	}
+
+	public function setUserName($userName) {
+		$this->userName = $userName;
+	}
+
+	public function setAccessLevel($accessLevel) {
+		$this->accessLevel = $accessLevel;
 	}
 
 	public function setFirstAccess($firstAccess) {

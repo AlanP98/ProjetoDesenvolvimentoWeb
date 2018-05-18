@@ -3,14 +3,8 @@
 require_once '../config.php';
 require_once DIR . 'Repositorys/UserRepository.php';
 
-requireLogin();
-
-$module = new Module('excluir usuários', 2);
-$result = Authenticator::verifyPermission($module);
-if ($result !== true) {
-	echo json_encode($result);
-	exit;
-}
+Authenticator::requireLogin();
+Authenticator::verifyPermission('DELETE_USER');
 
 try {
 	echo json_encode(deleteUsers());
@@ -24,13 +18,7 @@ function deleteUsers() {
 
 	if ($_SERVER['REQUEST_METHOD'] === 'DELETE') {
 		parse_str(file_get_contents('php://input'), $_DELETE);
-
-		$deleteIds = array();
-		if (isset($_DELETE['self'])) {
-			$deleteIds[] = $connectedUserId;
-		} else {
-			$deleteIds = (isset($_DELETE['ids']) ? $_DELETE['ids'] : 0);
-		}
+		$deleteIds = (isset($_DELETE['ids']) && is_array($_DELETE['ids']) ? $_DELETE['ids'] : array());
 
 		if (!empty($deleteIds)) {
 			$userRepository = new UserRepository();
@@ -56,6 +44,6 @@ function deleteUsers() {
 			return new ErrorObj(400, 'Nenhum usuário foi selecionado.');
 		}
 	} else {
-		return new ErrorObj(400, 'DELETE requerido através do método incorreto: "' . $method . '"');
+		return new ErrorObj(400, 'DELETE requerido através do método incorreto: "' . $_SERVER['REQUEST_METHOD'] . '"');
 	}
 }

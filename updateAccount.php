@@ -1,6 +1,6 @@
 <?php
 	require_once "config.php";
-	requireLogin();
+	Authenticator::requireLogin();
 
 	if (Authenticator::isFirstAccess()) {
 ?>
@@ -33,12 +33,12 @@
 	<div class="container">
 		<div class="alert alert-warning">
 			<strong>Este é o seu primeiro acesso!</strong><br>
-			<span>Atualize seus dados antes de acessar o sistema.</span>
+			<span>Atualize seus dados antes de acessar a conta.</span>
 		</div>
 
 		<div class="mt-5 text-right">
-			<i class="far fa-check-circle text-success ml-5" style="font-size: 50px; cursor: pointer;" data-toggle="tooltip" data-placement="bottom" title="Atualizar meus dados" onclick="saveUser('firstAccess')"></i>
-			<i class="fas fa-user-times text-danger ml-5" style="font-size: 50px; cursor: pointer;" data-toggle="tooltip" data-placement="bottom" title="Excluir minha conta" onclick="confirmDeleteUsers([], 1)"></i>
+			<i class="far fa-check-circle text-success ml-5" style="font-size: 50px; cursor: pointer;" data-toggle="tooltip" data-placement="bottom" title="Atualizar meus dados" onclick="updateAccount(true)"></i>
+			<i class="fas fa-user-times text-danger ml-5" style="font-size: 50px; cursor: pointer;" data-toggle="tooltip" data-placement="bottom" title="Excluir minha conta" onclick="confirmDeleteAccount()"></i>
 			<i class="fas fa-power-off ml-5 text-secondary" style="font-size: 50px; cursor: pointer;" data-toggle="tooltip" data-placement="bottom" title="Encerrar sessão" onclick="confirmLogout()"></i>
 		</div>
 
@@ -46,7 +46,7 @@
 		<div id="content" class="mt-5"></div>
 	</div>
 
-	<script type="text/javascript" src="View/Scripts/UserSharedFunctions.js"></script>
+	<script type="text/javascript" src="View/Scripts/Registration.js"></script>
 	<script>
 		$(function() {
 			openRegistrationForm({'displayActions': false});

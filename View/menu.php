@@ -1,6 +1,6 @@
 <?php
 	require_once 'config.php';
-	requireLogin();
+	Authenticator::requireLogin();
 ?>
 
 <div class="container-fluid">
@@ -15,8 +15,12 @@
 		<li class="nav-item dropdown">
 			<span class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Cadastros</span>
 			<div class="dropdown-menu" value="cadastro">
+
+			<?php if (Authenticator::hasPermission('WRITE_USER')) { ?>
 				<a class="dropdown-item" href="#" id="registerUsers" value="usuários">Usuários</a>
 				<div class="dropdown-divider"></div>
+			<?php } ?>
+
 				<a class="dropdown-item" href="#" id="registerPersons" value="pessoas">Pessoas</a>
 				<div class="dropdown-divider"></div>
 				<a class="dropdown-item" href="#" id="registerProducts" value="produtos">Produtos</a>
@@ -48,7 +52,7 @@
 			<div id="welcome" class="ml-2">
 				Bem-vindo&nbsp;
 				<span class="text-primary">
-					<?php echo (Session::getInstance()->getByKey('AUTHENTICATION'))->getUserName(); ?>
+					<?php echo Session::getInstance()->getByKey('realName'); ?>
 				</span>
 				!
 			</div>
@@ -58,5 +62,5 @@
 	<div id="content" class="mt-5"></div>
 </div>
 
-<script type="text/javascript" src="View/Scripts/menu.js"></script>
-<script type="text/javascript" src="View/Scripts/UserSharedFunctions.js"></script>
+<script type="text/javascript" src="View/Scripts/Menu.js"></script>
+<script type="text/javascript" src="View/Scripts/Registration.js"></script>

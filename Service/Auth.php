@@ -10,7 +10,7 @@ if (isset($_POST['userName']) && isset($_POST['password'])) {
 	if ($response instanceof ErrorObj) {
 		echo json_encode((array) $response);
 	} else {
-		echo json_encode(['success' => 1]);
+		echo json_encode(array('success' => 1, 'accessLevel' => $response->getPermissions()));
 	}
 } else {
 	$response = new ErrorObj(401, 'Usuário ou senha inválidos.', '');

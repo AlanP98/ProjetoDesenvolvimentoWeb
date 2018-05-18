@@ -4,14 +4,8 @@ require_once '../config.php';
 require_once DIR . 'Classes/Product.php';
 require_once DIR . 'Repositorys/ProductRepository.php';
 
-requireLogin();
-
-$module = new Module('cadastrar produtos', 1);
-$result = Authenticator::verifyPermission($module);
-if ($result !== true) {
-	echo json_encode($result);
-	exit;
-}
+Authenticator::requireLogin();
+Authenticator::verifyPermission('WRITE_PRODUCT');
 
 try {
 	$result = registerProduct();

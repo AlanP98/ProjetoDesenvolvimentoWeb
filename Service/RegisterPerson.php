@@ -4,14 +4,8 @@ require_once '../config.php';
 require_once DIR . 'Classes/Person.php';
 require_once DIR . 'Repositorys/PersonRepository.php';
 
-requireLogin();
-
-$module = new Module('cadastrar pessoas', 1);
-$result = Authenticator::verifyPermission($module);
-if ($result !== true) {
-	echo json_encode($result);
-	exit;
-}
+Authenticator::requireLogin();
+Authenticator::verifyPermission('WRITE_PERSON');
 
 try {
 	echo json_encode(registerPerson());

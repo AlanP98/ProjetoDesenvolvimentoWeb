@@ -40,3 +40,8 @@ ALTER TABLE `projeto_desenvolvimento_web`.`person` ADD CONSTRAINT `person_user` 
 # Atualizações: 16/05/2018
 ALTER TABLE `projeto_desenvolvimento_web`.`person` DROP COLUMN `recordNumber`, DROP INDEX `recordNumber_UNIQUE`;
 ALTER TABLE `projeto_desenvolvimento_web`.`user` ADD COLUMN `firstAccess` TINYINT NOT NULL DEFAULT 1 AFTER `accessLevel`;
+
+
+# INSERIR USUÁRIO
+INSERT INTO `projeto_desenvolvimento_web`.`user` (`userName`, `password`, `accessLevel`, `firstAccess`) VALUES ('admin', 'admin', '2', '1');
+INSERT INTO `projeto_desenvolvimento_web`.`person` (`name`, `gender`, `email`, `idUser`) VALUES ('Administrador', 'O', 'admin@mail.com', '1');

@@ -6,15 +6,18 @@ require_once DIR . 'Classes/User.php';
 
 class Authenticator {
 
+	//TODO: UTILIZAR CRIPTOGRAFIA PARA A SENHA
 	public function authenticate($userName, $password) {
-		//TODO: UTILIZAR CRIPTOGRAFIA PARA A SENHA
 		$userRepository = new UserRepository();
 		$user = $userRepository->getByUsername($userName);
 
 		if (! $user) {
 			return new ErrorObj('401', 'Usuário não encontrado.', 'userName');
 		} else {
-			$userObj = new User($user['userName'], $user['password'], $user['accessLevel'], $user['id'], $user['firstAccess']);
+			$realName = $userRepository->getPersonNameByIdUser($user['id']);
+			Session::getInstance()->save('realName', $realName);
+
+			$userObj = new User($user['id'], $user['userName'], $user['password'], $user['accessLevel'], $user['firstAccess']);
 			if ($userObj->checkPassword($password)) {
 				if (self::isLogged()) {
 					session_destroy();
@@ -41,6 +44,13 @@ class Authenticator {
 		}
 	}
 
+	//TODO: validar tempo de sessão - permitir até 30 min sem atividade
+	public static function requireLogin() {
+		if (!self::isLogged()) {
+			self::logout();
+		}
+	}
+
 	public static function isLogged() {
 		$session = Session::getInstance();
 		return ($session->getByKey('isLogged') === true);
@@ -50,13 +60,13 @@ class Authenticator {
 		$session = Session::getInstance();
 		$session->destroy();
 		echo "<script>window.location.href='index.php'</script>";
-		die;
+		exit;
 	}
 
 	public static function redirectFirstAccess() {
 		if (self::isFirstAccess()) {
 			header('Location: updateAccount.php');
-			die;
+			exit;
 		}
 	}
 
@@ -66,18 +76,48 @@ class Authenticator {
 		return ($auth->isFirstAccess());
 	}
 
-	public static function verifyPermission($module) {
+	public static function verifyPermission($permissionId) {
+		if (self::hasPermission($permissionId)) {
+			return true;
+		} else {
+			$permission = self::getPermissionById($permissionId);
+			$permissionError = new ErrorObj(401, 'Você não possui permissão para ' . $permission->getName());
+			echo json_encode($permissionError);
+			exit;
+		}
+	}
+
+	public static function hasPermission($permissionId) {
 		$session = Session::getInstance();
 		$auth = $session->getByKey('AUTHENTICATION');
 
-		$isModule = ($module instanceof Module);
-		$havePermission = ($auth->getPermissions() >= $module->getMinimumAccessLevel());
+		$permission = self::getPermissionById($permissionId);
+		$isPermission = ($permission instanceof Permission);
+		return ($auth->getPermissions() >= $permission->getMinimumAccessLevel());
+	}
 
-		if ($isModule && $havePermission) {
-			return true;
+	private static function getPermissionById($permissionId) {
+		$permissions = self::getPermissions();
+
+		foreach ($permissions as $permission) {
+			if ($permission->getId() == $permissionId) {
+				return $permission;
+			}
 		}
 
-		return new ErrorObj(401, 'Você não possui permissão para ' . $module->getName());
+		return null;
+	}
+
+	private static function getPermissions() {
+		return array(
+			new Permission('WRITE_USER', 'gerenciar usuários', 2),
+			new Permission('WRITE_PERSON', 'gerenciar pessoas', 1),
+			new Permission('WRITE_PRODUCT', 'gerenciar produtos', 1),
+
+			new Permission('DELETE_USER', 'excluir usuários', 2),
+			new Permission('DELETE_PERSON', 'excluir pessoas', 2),
+			new Permission('DELETE_PRODUCT', 'excluir produtos', 2),
+		);
 	}
 
 }

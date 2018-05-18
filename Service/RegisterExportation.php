@@ -3,7 +3,7 @@
 require_once '../config.php';
 require_once DIR . 'Factorys/Exporter/ExporterFactoryProvider.php';
 
-requireLogin();
+Authenticator::requireLogin();
 
 try {
 	if (isset($_GET['exporterType']) && isset($_GET['object'])) {

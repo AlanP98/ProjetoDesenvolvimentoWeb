@@ -12,4 +12,4 @@
 
 <div id="message" style="display: none;"></div>
 
-<script type="text/javascript" src="View/Scripts/FormLogin.js"></script>
+<script type="text/javascript" src="View/Scripts/Login.js"></script>

@@ -4,7 +4,7 @@
 		require_once $file;
 	}
 
-	requireLogin();
+	Authenticator::requireLogin();
 	require_once DIR . '/View/Forms/FormRegisterPerson.php';
 ?>
 

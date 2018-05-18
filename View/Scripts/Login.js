@@ -11,6 +11,8 @@ function login() {
 		dataType: 'json',
 		alwaysFn: function(response) {
 			if (response.success) {
+				setCookie('accessPermission', response.accessLevel, '');
+
 				window.location.assign('dashboard.php');
 			} else if (response.errorMessage) {
 				createModal({

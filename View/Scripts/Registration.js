@@ -15,6 +15,7 @@ function confirmLogout() {
 }
 
 function logout() {
+	deleteCookie('accessPermission');
 	new Ajax().GET('Service/Logout.php');
 	window.location.href = 'index.php';
 }
@@ -39,11 +40,11 @@ function openRegistrationForm(options) {
 
 function bindRegistrationEvents() {
 	$('#saveAccount').click(function () {
-		saveUser('self');
+		updateAccount();
 	});
 
 	$('#deleteAccount').click(function () {
-		confirmDeleteUsers([], 1);
+		confirmDeleteAccount();
 	});
 }
 
@@ -95,43 +96,45 @@ function deleteUsers(ids, self) {
 	ajax.DELETE('Service/DeleteUser.php', data);
 }
 
-function saveUser(user) {
-	var messages = [];
+function confirmDeleteAccount() {
+	createModal({
+		'modalId': 'modalDeleteAccount',
+		'body': 'Você realmente deseja excluir a sua conta?',
+		'smallModal': true,
+		'textBtnOk': 'Sim',
+		'textBtnCancel': 'Não',
+		'classBtnOk': 'btn-danger',
+		'fnOk': function () {
+			deleteAccount();
+		}
+	});
+}
 
-	switch (user) {
-		case 'self':
-		case 'firstAccess':
-			messages[0] = 'Atualizar cadastro';
-			messages[1] = 'Os seus dados cadastrais serão atualizados. Você confirma a ação?';
-			messages[2] = 'Seus dados cadastrais foram atualizados com sucesso!';
-			break;
+function deleteAccount() {
+	var ajax = new Ajax({
+		'dataType': 'json',
+		alwaysFn: function (response) {
+			destroyModal('modalDeleteAccount');
 
-		case 'new':
-			messages[0] = 'Vincular usuário';
-			messages[1] = 'Um perfil de acesso será cadastrado para a pessoa. Você confirma a ação?';
-			messages[2] = 'Perfil de acesso cadastrado com sucesso!';
-			break;
+			if (!displayErrors(response)) {
+				logout();
+			}
+		}
+	});
 
-		default:
-			messages[0] = 'Atualizar dados do usuário';
-			messages[1] = 'O perfil será atualizado. Você confirma a ação?';
-			messages[2] = 'Perfil atualizado com sucesso!';
-			break;
-	}
+	ajax.POST('Service/DeleteAccount.php');
+}
 
+function updateAccount(firstAccess) {
 	createModal({
 		'modalId': 'modalSaveAccount',
-		'title': messages[0],
-		'body': messages[1],
+		'title': 'Atualizar cadastro',
+		'body': 'Os seus dados cadastrais serão atualizados. Você confirma a ação?',
 		'textBtnOk': 'Sim',
 		'classBtnOk': 'btn-success',
 		'fnOk': function () {
-			var userData = getFormData($('#formRegisterUser'));
-			var personData = getFormData($('#formRegisterPerson'));
-			var data = $.extend({}, userData, personData);
-			if (user == 'firstAccess') {
-				data.firstAccess = true;
-			}
+			var data = getFormUserValues();
+			data.firstAccess = (firstAccess || false);
 
 			var ajax = new Ajax({
 				'dataType': 'json',
@@ -139,24 +142,24 @@ function saveUser(user) {
 					destroyModal('modalSaveAccount');
 					if (!displayErrors(response)) {
 						destroyModal('userPersonForm');
-						if (user == 'firstAccess') {
+						if (firstAccess) {
 							window.location.href = 'dashboard.php';
 						} else {
 							createAlert({
 								'alertType': 'success',
 								'title': 'Sucesso',
-								'msg': messages[2]
+								'msg': 'Cadastro atualizado com sucesso!'
 							});
-						}
-					}
 
-					if (typeof list == 'function') {
-						list();
+							setTimeout(function() {
+								location.reload();
+							}, 1500);
+						}
 					}
 				}
 			});
 
-			ajax.POST('Service/RegisterUser.php', data);
+			ajax.PUT('Service/UpdateAccount.php', data);
 		}
 	});
 }
@@ -215,6 +218,12 @@ function getRegistrationForm(updateContent, displayActions) {
 
 	ajax.GET('View/Forms/FormRegisterUser.php', { 'displayActions': (displayActions || 0) });
 	return deferred.promise();
+}
+
+function getFormUserValues() {
+	var userData = getFormData($('#formRegisterUser'));
+	var personData = getFormData($('#formRegisterPerson'));
+	return $.extend({}, userData, personData);
 }
 
 function checkPwds() {

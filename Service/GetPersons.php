@@ -3,7 +3,7 @@
 require_once '../config.php';
 require_once DIR . 'Repositorys/PersonRepository.php';
 
-requireLogin();
+Authenticator::requireLogin();
 
 try {
 	$filters = array(

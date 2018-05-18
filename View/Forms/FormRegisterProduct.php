@@ -1,6 +1,6 @@
 <?php
 	require_once '../../config.php';
-	requireLogin();
+	Authenticator::requireLogin();
 ?>
 
 <form id="formRegisterProduct" action="javascript:void(0);">

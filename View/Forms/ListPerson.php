@@ -1,6 +1,6 @@
 <?php
 	require_once '../../config.php';
-	requireLogin();
+	Authenticator::requireLogin();
 ?>
 
 <button type="button" class="btn btn-outline-secondary mb-3" id="toggleFilters">Exibir filtros</button>
@@ -64,4 +64,4 @@
 	</table>
 </div>
 
-<script type="text/javascript" src="View/Scripts/FormPersons.js"></script>
+<script type="text/javascript" src="View/Scripts/Persons.js"></script>

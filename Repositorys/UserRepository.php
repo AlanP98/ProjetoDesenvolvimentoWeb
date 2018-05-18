@@ -95,6 +95,17 @@ class UserRepository implements IRepository {
 		return $stmt->fetch();
 	}
 
+	public function getPersonNameByIdUser(int $id) {
+		$query = 'SELECT p.name FROM person p ' .
+			'LEFT JOIN user u ON u.id = p.idUser ' .
+			'WHERE u.id = ?';
+		$stmt = $this->conn::$connection->prepare($query);
+		$stmt->bindParam(1, $id, PDO::PARAM_INT);
+		$stmt->execute();
+		$rs = $stmt->fetch();
+		return $rs['name'];
+	}
+
 	public function getAll() {
 		$query = 'SELECT * FROM user';
 		$stmt = $this->conn::$connection->prepare($query);
